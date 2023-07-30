@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sidepanel_flutter/screens/chat_screen/chat_screen.dart';
@@ -317,10 +318,7 @@ class _SidepanelState extends State<Sidepanel> {
                     ),
                   ),
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomeScreen()));
+                    FirebaseAuth.instance.signOut();
                   },
                 ),
               ),

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sidepanel_flutter/utils/round_text_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../utils/show_dialog.dart';
+import '../../utils/components/show_dialog.dart';
 
 class ContactScreen extends StatefulWidget {
   const ContactScreen({super.key});

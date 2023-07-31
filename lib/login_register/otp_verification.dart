@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:mcx_live/models/user_model.dart';
 import 'package:mcx_live/utils/color_constants.dart';
 
+import '../utils/enums/gender_enum.dart';
+
 class EmailVerifier extends StatelessWidget {
   const EmailVerifier(
       {super.key,
@@ -99,10 +101,10 @@ class _FormValidationTextFieldState extends State<FormValidationTextField> {
 
   Future<void> register() async {
     try {
-      final _db = FirebaseFirestore.instance;
-      final _auth = FirebaseAuth.instance;
+      final db = FirebaseFirestore.instance;
+      final auth = FirebaseAuth.instance;
       String? userId;
-      await _auth
+      await auth
           .createUserWithEmailAndPassword(
         email: widget.email,
         password: widget.password,
@@ -111,23 +113,26 @@ class _FormValidationTextFieldState extends State<FormValidationTextField> {
         Navigator.pop(context);
         userId = value.user?.uid;
       });
-
-      final obj = {
-        "name": widget.name,
-        "email": widget.email,
-        "number": widget.phone,
-        "wallet": "100.0"
-      };
-      await _db.collection("users").doc(userId).set(obj);
+      final data = UserModel.toMap(
+        UserModel(
+            firstName: widget.name,
+            secondName: widget.name,
+            email: widget.email,
+            number: widget.phone,
+            wallet: "100.0",
+            gender: Gender.non.name,
+            id: 'xxx'),
+      );
+      await db.collection("users").doc(userId).set(data);
     } on FirebaseAuthException catch (e) {
       // pop the loading circle
       Navigator.pop(context);
       // displaying error
-      ErrorMessage(e.code);
+      errorMessage(e.code);
     }
   }
 
-  void ErrorMessage(String message) {
+  void errorMessage(String message) {
     showDialog(
       context: context,
       builder: (context) {

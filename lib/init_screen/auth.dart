@@ -45,26 +45,29 @@ class _MyAuthState extends State<MyAuth> {
                 //AdminModel adminData = snapshotAdmin.data as AdminModel;
                 return const HomeScreen();
               } else {
-                return Consumer<UserProvider>(
-                  builder: (context, userProvider, child) => FutureBuilder(
-                    future: getUser(email),
-                    builder: (context, snapshot1) {
-                      if (snapshot1.connectionState == ConnectionState.done) {
-                        if (snapshot1.hasData) {
-                          UserModel userModel = snapshot1.data as UserModel;
-                          userProvider.setUser(userModel);
-                          return const SidePanelScreen();
-                        } else if (snapshot1.hasError) {
-                          return Center(
-                              child: Text(snapshot1.error.toString()));
-                        } else {
-                          return const Center(child: Text("Something wrong"));
-                        }
+                return StreamBuilder(
+                  stream: _db
+                      .collection("users")
+                      .where("email", isEqualTo: email)
+                      .snapshots(),
+                  builder: (context, userSnapshot) {
+                    if (userSnapshot.hasData) {
+                      if (userSnapshot.data!.size != 0) {
+                        UserModel userModel = userSnapshot.data!.docs
+                            .map((e) => UserModel.fromSnapshot(e))
+                            .single;
+                        Provider.of<UserProvider>(context, listen: false)
+                            .setUser(userModel);
+                        return const SidePanelScreen();
                       } else {
                         return const Loading();
                       }
-                    },
-                  ),
+                    } else if (userSnapshot.hasError) {
+                      return Center(child: Text(userSnapshot.error.toString()));
+                    } else {
+                      return const Loading();
+                    }
+                  },
                 );
               }
             },

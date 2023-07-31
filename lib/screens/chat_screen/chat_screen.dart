@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -8,23 +9,23 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/date_symbol_data_local.dart';
+// import 'package:intl/date_symbol_data_local.dart';
+import 'package:mcx_live/utils/components/circular_progress.dart';
 import 'package:mime/mime.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
-Future<void> main() async {
-  initializeDateFormatting().then(
-    (_) => runApp(
-      const ChatScreen(),
-    ),
-  );
-}
+// Future<void> main() async {
+//   initializeDateFormatting().then(
+//     (_) => runApp(
+//       const ChatScreen(),
+//     ),
+//   );
+// }
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
-
   @override
   Widget build(BuildContext context) => const MaterialApp(
         home: ChatPage(),
@@ -40,6 +41,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   List<types.Message> _messages = [];
+  final _db = FirebaseFirestore.instance;
   final _user = const types.User(
     id: '82091008-a484-4a89-ae75-a22bf8d6f3ac',
   );
@@ -228,15 +230,45 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: Chat(
-          messages: _messages,
-          onAttachmentPressed: _handleAttachmentPressed,
-          onMessageTap: _handleMessageTap,
-          onPreviewDataFetched: _handlePreviewDataFetched,
-          onSendPressed: _handleSendPressed,
-          showUserAvatars: true,
-          showUserNames: true,
-          user: _user,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          title: const Text(
+            'Global Chat',
+            style: TextStyle(
+              fontSize: 22,
+              color: Colors.black,
+            ),
+          ),
+          leading: GestureDetector(
+            child: const Icon(
+              Icons.arrow_back_outlined,
+              color: Colors.black,
+            ),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
+        body: StreamBuilder(
+            stream: _db.collection("messages").snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Chat(
+                  messages: _messages,
+                  onAttachmentPressed: null,
+                  //onAttachmentPressed: _handleAttachmentPressed,
+                  onMessageTap: _handleMessageTap,
+                  onPreviewDataFetched: _handlePreviewDataFetched,
+                  onSendPressed: _handleSendPressed,
+                  showUserAvatars: true,
+                  showUserNames: true,
+                  user: _user,
+                );
+              } else {
+                return const Loading();
+              }
+            }),
       );
 }

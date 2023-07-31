@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "sidepanel_flutter" "\0"
+            VALUE "FileDescription", "mcx_live" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "sidepanel_flutter" "\0"
+            VALUE "InternalName", "mcx_live" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "sidepanel_flutter.exe" "\0"
-            VALUE "ProductName", "sidepanel_flutter" "\0"
+            VALUE "OriginalFilename", "mcx_live.exe" "\0"
+            VALUE "ProductName", "mcx_live" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sidepanel_flutter/screens/chat_screen/chat_screen.dart';
+import 'package:mcx_live/screens/chat_screen/chat_screen.dart';
 
 import '../utils/components/button.dart';
 import '../utils/components/textfield.dart';

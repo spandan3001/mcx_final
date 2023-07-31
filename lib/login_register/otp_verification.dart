@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sidepanel_flutter/models/user_model.dart';
-import 'package:sidepanel_flutter/utils/color_constants.dart';
+import 'package:mcx_live/models/user_model.dart';
+import 'package:mcx_live/utils/color_constants.dart';
 
 class EmailVerifier extends StatelessWidget {
   const EmailVerifier(

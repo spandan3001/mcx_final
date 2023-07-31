@@ -1,20 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sidepanel_flutter/screens/chat_screen/chat_screen.dart';
-import 'package:sidepanel_flutter/screens/contact_us/Contact%20Us.dart';
-import 'package:sidepanel_flutter/about.dart';
-import 'package:sidepanel_flutter/home.dart';
+import 'package:mcx_live/screens/chat_screen/chat_screen.dart';
+import 'package:mcx_live/screens/contact_us/Contact%20Us.dart';
+import 'package:mcx_live/about.dart';
 
-import 'My Profile.dart';
+import 'screens/my_profile_screen.dart';
 
-class Sidepanel extends StatefulWidget {
-  const Sidepanel({Key? key}) : super(key: key);
+class SidePanelScreen extends StatefulWidget {
+  const SidePanelScreen({Key? key}) : super(key: key);
   @override
-  State<Sidepanel> createState() => _SidepanelState();
+  State<SidePanelScreen> createState() => _SidePanelScreenState();
 }
 
-class _SidepanelState extends State<Sidepanel> {
+class _SidePanelScreenState extends State<SidePanelScreen> {
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -24,7 +23,7 @@ class _SidepanelState extends State<Sidepanel> {
         elevation: 0,
         backgroundColor: Colors.lightBlue,
         title: const Text(
-          'SidePanel',
+          'MCX',
           style: TextStyle(
             fontSize: 22,
             color: Colors.white,

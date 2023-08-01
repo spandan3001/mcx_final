@@ -23,6 +23,10 @@ class UserProvider extends ChangeNotifier {
     _notifyAll();
   }
 
+  String getEmail() {
+    return _userModel.email;
+  }
+
   void _notifyAll() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();

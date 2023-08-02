@@ -255,7 +255,9 @@ class _ProfileState extends State<Profile> {
                                             ? secondNameController.text
                                             : userModel.secondName,
                                     email: userModel.email,
-                                    wallet: userModel.wallet),
+                                    wallet: userModel.wallet,
+                                    referCode: userModel.referCode,
+                                    refererUId: userModel.refererUId),
                               );
                               FocusScopeNode currentFocus =
                                   FocusScope.of(context);

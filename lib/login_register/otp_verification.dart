@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:mcx_live/models/user_model.dart';
 import 'package:mcx_live/utils/color_constants.dart';
 
+import '../services/code_generator.dart';
 import '../utils/enums/gender_enum.dart';
 
 class EmailVerifier extends StatelessWidget {
@@ -15,12 +16,14 @@ class EmailVerifier extends StatelessWidget {
       required this.password,
       required this.phone,
       required this.name,
+      required this.refererId,
       required this.emailOTP});
 
   final String email;
   final String password;
   final String phone;
   final String name;
+  final String? refererId;
   final EmailOTP emailOTP;
 
   @override
@@ -82,12 +85,14 @@ class FormValidationTextField extends StatefulWidget {
     required this.phone,
     required this.name,
     required this.emailOTP,
+    this.refererUId,
   });
 
   final String email;
   final String password;
   final String phone;
   final String name;
+  final String? refererUId;
   final EmailOTP emailOTP;
 
   @override
@@ -115,13 +120,16 @@ class _FormValidationTextFieldState extends State<FormValidationTextField> {
       });
       final data = UserModel.toMap(
         UserModel(
-            firstName: widget.name,
-            secondName: widget.name,
-            email: widget.email,
-            number: widget.phone,
-            wallet: "100.0",
-            gender: Gender.non.name,
-            id: 'xxx'),
+          firstName: widget.name,
+          secondName: widget.name,
+          email: widget.email,
+          number: widget.phone,
+          refererUId: widget.refererUId,
+          wallet: "100.0",
+          gender: Gender.non.name,
+          referCode: CodeGenerator.generateCode(),
+          id: '',
+        ),
       );
       await db.collection("users").doc(userId).set(data);
     } on FirebaseAuthException catch (e) {
@@ -157,9 +165,19 @@ class _FormValidationTextFieldState extends State<FormValidationTextField> {
         otpType: OTPType.digitsOnly);
     //print(OtpController.text);
     //print(myAuth.verifyOTP(otp: OtpController.text));
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
     if (await widget.emailOTP.verifyOTP(otp: otpController.text) == true) {
+      Navigator.pop(context);
       await register();
     } else {
+      Navigator.pop(context);
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Invalid OTP")));
     }

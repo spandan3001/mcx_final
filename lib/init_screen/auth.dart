@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:mcx_live/provider_classes/user_detials_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../SidePanel.dart';
-import '../home.dart';
+import '../screens/home_screen/home_screen.dart';
+import '../admin_home.dart';
 import '../login_register/login_or_register.dart';
 import '../models/admin_model.dart';
 import '../models/user_model.dart';

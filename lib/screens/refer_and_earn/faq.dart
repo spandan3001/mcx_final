@@ -30,23 +30,18 @@ class FaqScreen extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        child: Container(
-          width: w,
-          height: h,
-          color: Colors.white,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Center(
-                child: Image.asset(
-                  'images/faq.png',
-                  alignment: Alignment.center,
-                  width: 280,
-                  height: 255,
-                ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Center(
+              child: Image.asset(
+                'images/faq.png',
+                alignment: Alignment.center,
+                width: 280,
+                height: 255,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

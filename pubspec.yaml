@@ -44,6 +44,10 @@ dependencies:
   cloud_firestore: ^4.8.1
   email_otp: ^2.0.1
   provider: ^6.0.5
+  image_picker: ^1.0.1
+  firebase_storage: ^11.2.5
+  html: any
+  http: any
 
 dev_dependencies:
   flutter_test:

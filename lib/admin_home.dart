@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           'Home',
           style: TextStyle(
             fontSize: 22,
@@ -45,7 +45,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Center(
+                child: const Center(
                   child: Text(
                     'Requests',
                     style: TextStyle(
@@ -59,7 +59,7 @@ class HomeScreen extends StatelessWidget {
                 Navigator.pop(context);
               },
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             GestureDetector(
               child: Container(
                 width: 320,

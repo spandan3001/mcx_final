@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mcx_live/services/firestore_servies.dart';
 
+import '../../utils/google_font.dart';
 import 'input_box.dart';
 import 'message_stream.dart';
 
@@ -16,7 +18,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final messageController = TextEditingController();
   late String textMessage;
-  final _firebaseFirestore = FirebaseFirestore.instance;
+  //final _firebaseFirestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -28,17 +30,36 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
-        title: const Text("chat"),
+        title: Text(
+          'CHAT',
+          textAlign: TextAlign.center,
+          style: SafeGoogleFont(
+            'Poppins',
+            fontSize: 25,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
         centerTitle: true,
+        leading: GestureDetector(
+          child: const Icon(
+            Icons.arrow_back_outlined,
+            color: Colors.black,
+          ),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             MessageStream(
-              stream: _firebaseFirestore
-                  .collection("messages")
-                  .orderBy("timeStamp")
+              stream: CloudService.messageCollection
+                  .orderBy("timeStamp", descending: true)
                   .snapshots(),
             ),
             InputMessage(
@@ -46,7 +67,7 @@ class _ChatScreenState extends State<ChatScreen> {
               onPressed: () {
                 textMessage = messageController.text;
                 if (textMessage.trim().isNotEmpty) {
-                  _firebaseFirestore.collection("messages").add({
+                  CloudService.messageCollection.add({
                     'sender': "tyian3001@gmail.com",
                     "text": textMessage,
                     "timeStamp": DateTime.now()

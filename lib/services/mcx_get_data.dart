@@ -19,7 +19,7 @@ class _TestState extends State<Test> {
   @override
   void initState() {
     super.initState();
-    getRequest();
+    startTimer();
   }
 
   final url = Uri.parse("https://www.mcxdata.in/");
@@ -43,19 +43,27 @@ class _TestState extends State<Test> {
     return dataModelList;
   }
 
-  void getRequest() async {
+  void startTimer() {
+    //start with no delay
+    getRequest();
+
+    //timer
     Timer.periodic(
       const Duration(seconds: 5),
       (timer) async {
-        try {
-          final response = await http.get(url);
-          dom.Document html = dom.Document.html(response.body);
-          streamController.sink.add(getData(html));
-        } catch (ex) {
-          print(ex);
-        }
+        getRequest();
       },
     );
+  }
+
+  void getRequest() async {
+    try {
+      final response = await http.get(url);
+      dom.Document html = dom.Document.html(response.body);
+      streamController.sink.add(getData(html));
+    } catch (ex) {
+      print(ex);
+    }
   }
 
   @override

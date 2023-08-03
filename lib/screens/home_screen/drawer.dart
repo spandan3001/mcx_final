@@ -1,13 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:mcx_live/screens/wallet/utils/enums.dart';
 import '../../about.dart';
 import '../chat_screen/chat_screen.dart';
-import '../contact_us/Contact Us.dart';
+import '../contact_us/contact_us_screen.dart';
 import '../my_profile_screen.dart';
 import '../refer_and_earn/faq.dart';
 import '../refer_and_earn/refer_and_earn.dart';
+import '../wallet/wallet_screen.dart';
 
 Drawer drawer(BuildContext context) {
   return Drawer(
@@ -79,7 +80,12 @@ Drawer drawer(BuildContext context) {
             ),
           ),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const WalletScreen(
+                          type: TypeOfSubmit.add,
+                        )));
           },
         ),
         ListTile(
@@ -117,7 +123,12 @@ Drawer drawer(BuildContext context) {
             ),
           ),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const WalletScreen(
+                          type: TypeOfSubmit.withdraw,
+                        )));
           },
         ),
         ListTile(

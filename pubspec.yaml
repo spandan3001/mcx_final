@@ -48,6 +48,7 @@ dependencies:
   firebase_storage: ^11.2.5
   html: any
   http: any
+  share_plus: ^7.1.0
 
 dev_dependencies:
   flutter_test:

@@ -31,7 +31,7 @@ class _AddRemoveScreenState extends State<AddRemoveScreen> {
       ),
       bottomNavigationBar:
           Image.asset("assets/line_chart.png", fit: BoxFit.fill),
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         child: Container(
           padding: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 0.42 * fem),
@@ -43,7 +43,6 @@ class _AddRemoveScreenState extends State<AddRemoveScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                // autogroupxnuyuMs (VSFoyBAcxBsMRhehPSxNUy)
                 padding:
                     EdgeInsets.fromLTRB(24 * fem, 24 * fem, 23 * fem, 39 * fem),
                 width: double.infinity,

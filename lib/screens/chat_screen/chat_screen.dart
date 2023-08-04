@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mcx_live/services/firestore_servies.dart';
+import 'package:mcx_live/services/firestore_services.dart';
+import 'package:provider/provider.dart';
 
+import '../../models/user_model.dart';
+import '../../provider_classes/user_details_provider.dart';
 import '../../utils/google_font.dart';
 import 'input_box.dart';
 import 'message_stream.dart';
@@ -27,6 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String email = Provider.of<UserProvider>(context, listen: false).getEmail();
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
@@ -68,7 +72,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 textMessage = messageController.text;
                 if (textMessage.trim().isNotEmpty) {
                   CloudService.messageCollection.add({
-                    'sender': "tyian3001@gmail.com",
+                    'sender': email,
                     "text": textMessage,
                     "timeStamp": DateTime.now()
                   });

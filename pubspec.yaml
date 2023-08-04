@@ -49,6 +49,7 @@ dependencies:
   html: any
   http: any
   share_plus: ^7.1.0
+  image_gallery_saver: ^2.0.3
 
 dev_dependencies:
   flutter_test:

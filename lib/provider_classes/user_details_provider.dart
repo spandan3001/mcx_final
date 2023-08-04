@@ -18,6 +18,14 @@ class UserProvider extends ChangeNotifier {
     _notifyAll();
   }
 
+  void updateDB(Map<String, dynamic> data) {
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(_userModel.id)
+        .update(data);
+    _notifyAll();
+  }
+
   void setUser(UserModel userModel) {
     _userModel = userModel;
     _notifyAll();

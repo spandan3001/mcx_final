@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mcx_live/admin/admin_home.dart';
 import 'package:mcx_live/screens/wallet/utils/enums.dart';
 import '../../about.dart';
 import '../chat_screen/chat_screen.dart';
@@ -16,7 +17,7 @@ Drawer drawer(BuildContext context) {
       children: [
         UserAccountsDrawerHeader(
           accountName: Text(
-            'Rahul Verma',
+            'SPANDAN M N',
             style: GoogleFonts.lato(
               color: Colors.black,
               fontSize: 22,
@@ -43,6 +44,28 @@ Drawer drawer(BuildContext context) {
           decoration: const BoxDecoration(),
           onDetailsPressed: () {
             Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Image.asset(
+            'images/User.png',
+            height: 35,
+            width: 35,
+            color: Colors.blue,
+          ),
+          title: Text(
+            'Admin',
+            style: GoogleFonts.lato(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const AdminHomeScreen()));
           },
         ),
         ListTile(
@@ -308,7 +331,13 @@ Drawer drawer(BuildContext context) {
             },
           ),
         ),
-        Image.asset('images/line chart.png')
+        SizedBox(
+          height: MediaQuery.sizeOf(context).height * 0.1,
+          child: Image.asset(
+            "images/line chart.png",
+            fit: BoxFit.fill,
+          ),
+        )
       ],
     ),
   );

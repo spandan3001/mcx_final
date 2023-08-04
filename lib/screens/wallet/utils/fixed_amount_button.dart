@@ -28,7 +28,7 @@ class AmountButton extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            '₹${value.name.substring(1)}.00',
+            '₹${value.name.substring(1)}',
             style: SafeGoogleFont(
               'Sofia Pro',
               fontSize: 18,

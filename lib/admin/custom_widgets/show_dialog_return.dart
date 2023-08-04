@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mcx_live/utils/google_font.dart';
 
-Future<void> showAlertDialog(BuildContext context,
+Future<bool?> showDialogReturn(BuildContext context,
     {required String text,
     required String title,
-    bool optionNo = true,
     VoidCallback? onPressed}) async {
-  return showDialog<void>(
+  return showDialog<bool>(
     context: context,
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
@@ -28,20 +27,22 @@ Future<void> showAlertDialog(BuildContext context,
           ),
         ),
         actions: <Widget>[
-          if (optionNo)
-            TextButton(
-              child: const Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
           TextButton(
-            child: const Text('Okay'),
+            child: const Text('No'),
             onPressed: () {
               if (onPressed != null) {
                 onPressed();
               }
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(false);
+            },
+          ),
+          TextButton(
+            child: const Text('Yes'),
+            onPressed: () {
+              if (onPressed != null) {
+                onPressed();
+              }
+              Navigator.of(context).pop(true);
             },
           ),
         ],

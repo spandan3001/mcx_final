@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mcx_live/screens/chat_screen/model/message_model.dart';
 import 'package:provider/provider.dart';
-import '../../provider_classes/user_detials_provider.dart';
+import '../../provider_classes/user_details_provider.dart';
 import 'message_bubble.dart';
 
 class MessageStream extends StatelessWidget {

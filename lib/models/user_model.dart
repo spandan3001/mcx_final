@@ -10,11 +10,13 @@ class UserModel {
   final String wallet;
   final String referCode;
   final String? refererUId;
+  final String? imageUrl;
 
   const UserModel(
       {required this.id,
       required this.referCode,
       required this.gender,
+      this.imageUrl,
       this.refererUId,
       required this.number,
       required this.firstName,
@@ -32,6 +34,7 @@ class UserModel {
         email: data["email"],
         wallet: data["wallet"],
         gender: data['gender'],
+        imageUrl: data['imageUrl'],
         secondName: data["secondName"],
         referCode: data["referCode"],
         refererUId: data["refererUid"]);
@@ -46,6 +49,7 @@ class UserModel {
       "gender": userModel.gender,
       "referCode": userModel.referCode,
       "refererUId": userModel.refererUId ?? "",
+      "imageUrl": userModel.imageUrl ?? ""
     };
   }
 }

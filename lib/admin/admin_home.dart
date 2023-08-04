@@ -1,121 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:mcx_live/admin/update_admin_screen.dart';
+import 'package:mcx_live/admin/update_upi/update_upi_screen.dart';
+import 'package:mcx_live/ui_screen.dart';
+import 'package:mcx_live/utils/components/app_bar.dart';
+import 'add_remove.dart';
+import 'custom_widgets/home_button.dart';
+import 'history_screen.dart';
 
-import 'add_&_remove.dart';
-import 'update_upi.dart';
-import 'history.dart';
-
-class home extends StatelessWidget {
-  const home({super.key});
+class AdminHomeScreen extends StatelessWidget {
+  const AdminHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height;
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: const Color(0xFF16171D),
-        title: const Text(
-          'Home',
-          style: TextStyle(
-            fontSize: 25,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          width: w,
-          height: h,
-          color: const Color(0xFF16171D),
+    return BackGround(
+      child: Scaffold(
+        appBar: appBar(
+            title: "HOME",
+            onTap: () {
+              Navigator.pop(context);
+            }),
+        body: Center(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 320,
-                height: 65,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AddRemove(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF5C249),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+              HomeButton(
+                text: "Requests",
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddRemoveScreen(),
                     ),
-                  ),
-                  child: const Text(
-                    'Requests',
-                    style: TextStyle(
-                      color: Color(0xFF16171D),
-                      fontSize: 28,
-                    ),
-                  ),
-                ),
+                  );
+                },
               ),
               const SizedBox(height: 35),
-              SizedBox(
-                width: 320,
-                height: 65,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UpdateUPI(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF5C249),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+              HomeButton(
+                text: "Update UPI",
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const UpdateUpiScreen(),
                     ),
-                  ),
-                  child: const Text(
-                    'Update UPI',
-                    style: TextStyle(
-                      color: Color(0xFF16171D),
-                      fontSize: 27,
-                    ),
-                  ),
-                ),
+                  );
+                },
               ),
               const SizedBox(height: 35),
-              SizedBox(
-                width: 320,
-                height: 65,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const History(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF5C249),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+              HomeButton(
+                text: "Approved",
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HistoryScreen(),
                     ),
-                  ),
-                  child: const Text(
-                    'Approved',
-                    style: TextStyle(
-                      color: Color(0xFF16171D),
-                      fontSize: 28,
-                    ),
-                  ),
-                ),
+                  );
+                },
               ),
-              const SizedBox(height: 100),
+              const SizedBox(height: 35),
+              HomeButton(
+                text: "Update Admin",
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AdminUpdateScreen(),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),

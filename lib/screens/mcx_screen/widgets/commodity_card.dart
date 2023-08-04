@@ -41,7 +41,7 @@ class _CommodityCardState extends State<CommodityCard> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                width: widget.dataModel.commodity.length * 15,
+                width: widget.dataModel.commodity.length * 20,
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,

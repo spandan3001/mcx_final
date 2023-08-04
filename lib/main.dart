@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mcx_live/provider_classes/user_detials_provider.dart';
+import 'package:mcx_live/provider_classes/admin_details_provider.dart';
+import 'package:mcx_live/provider_classes/user_details_provider.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'init_screen/auth.dart';
@@ -15,6 +16,9 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(
           create: (context) => UserProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AdminProvider(),
         ),
       ],
       child: const MyApp(),

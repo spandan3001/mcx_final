@@ -20,6 +20,8 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+    <string>used to demonstrate image downloader plugin</string>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>used to demonstrate image picker plugin</string>
     <key>NSCameraUsageDescription</key>

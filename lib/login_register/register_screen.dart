@@ -82,7 +82,7 @@ class _RegisterState extends State<Register> {
           state.pop();
           state.push(
             MaterialPageRoute(
-              builder: (context) => EmailVerifier(
+              builder: (context) => OtpVerifier(
                 emailOTP: myAuth,
                 email: email,
                 password: passwordController.text,
@@ -244,7 +244,7 @@ class _RegisterState extends State<Register> {
                       filled: true,
                       hintText: "Password",
                       hintStyle: const TextStyle(
-                          color: Color(0xFFF494D58), fontSize: 18)),
+                          color: Color(0xFF494D58), fontSize: 18)),
                   style: const TextStyle(color: Colors.white),
                 ),
               ),
@@ -335,13 +335,13 @@ class _RegisterState extends State<Register> {
 
                                 refererUid = userModel.id;
                                 //pop and show confirm dialog
-                                Navigator.pop(context);
+                                state.pop();
                                 showAlertDialog(context,
                                     text:
                                         "you have been referred by ${userModel.firstName}?",
                                     title: "confirm");
                               } else {
-                                Navigator.pop(context);
+                                state.pop();
                                 errorMessage(
                                     "could not find the users,try again");
                               }

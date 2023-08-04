@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../screens/wallet/utils/enums.dart';
-
 class PaymentModel {
   final String id;
   final String firstName;
@@ -9,7 +7,7 @@ class PaymentModel {
   final String email;
   final String number;
   final String refId;
-  final TypeOfSubmit type;
+  final String type;
   final bool approved;
   final String amount;
 
@@ -29,7 +27,7 @@ class PaymentModel {
       DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data()!;
     return PaymentModel(
-      refId: data['reference_id'],
+      refId: data['refId'],
       approved: data['approved'],
       number: data["number"],
       firstName: data["firstName"],
@@ -50,7 +48,7 @@ class PaymentModel {
       "approved": paymentModel.approved,
       "refId": paymentModel.refId,
       "amount": paymentModel.amount,
-      "type": paymentModel.type.name
+      "type": paymentModel.type
     };
   }
 }

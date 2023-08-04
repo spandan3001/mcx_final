@@ -9,8 +9,8 @@ import 'package:mcx_live/utils/color_constants.dart';
 import '../services/code_generator.dart';
 import '../utils/enums/gender_enum.dart';
 
-class EmailVerifier extends StatelessWidget {
-  const EmailVerifier(
+class OtpVerifier extends StatelessWidget {
+  const OtpVerifier(
       {super.key,
       required this.email,
       required this.password,
@@ -29,56 +29,56 @@ class EmailVerifier extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      constraints: const BoxConstraints.expand(),
-      color: const Color(0xFF16171D),
-      child: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 10),
+      body: Container(
+        constraints: const BoxConstraints.expand(),
+        color: const Color(0xFF16171D),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 10),
 
-              // Register
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "we have just sent you otp to your registered email .Please check your email and enter the otp",
-                      textAlign: TextAlign.justify,
-                      style: TextStyle(
-                          color: kWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22),
-                    ),
-                    const SizedBox(height: 20),
-                    // verify button
-                    FormValidationTextField(
-                      email: email,
-                      password: password,
-                      phone: phone,
-                      name: name,
-                      emailOTP: emailOTP,
-                    ),
+                // Register
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "we have just sent you otp to your registered email .Please check your email and enter the otp",
+                        style: TextStyle(
+                            color: kWhite,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22),
+                      ),
+                      const SizedBox(height: 20),
+                      // verify button
+                      FormValidationForOTP(
+                        email: email,
+                        password: password,
+                        phone: phone,
+                        name: name,
+                        emailOTP: emailOTP,
+                      ),
 
-                    const SizedBox(height: 15),
+                      const SizedBox(height: 15),
 
-                    // Already Login
-                  ],
+                      // Already Login
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
 }
 
-class FormValidationTextField extends StatefulWidget {
-  const FormValidationTextField({
+class FormValidationForOTP extends StatefulWidget {
+  const FormValidationForOTP({
     super.key,
     required this.email,
     required this.password,
@@ -96,11 +96,10 @@ class FormValidationTextField extends StatefulWidget {
   final EmailOTP emailOTP;
 
   @override
-  State<FormValidationTextField> createState() =>
-      _FormValidationTextFieldState();
+  State<FormValidationForOTP> createState() => _FormValidationForOTPState();
 }
 
-class _FormValidationTextFieldState extends State<FormValidationTextField> {
+class _FormValidationForOTPState extends State<FormValidationForOTP> {
   final _formKey = GlobalKey<FormState>();
   final otpController = TextEditingController();
 
@@ -129,6 +128,7 @@ class _FormValidationTextFieldState extends State<FormValidationTextField> {
           gender: Gender.non.name,
           referCode: CodeGenerator.generateCode(),
           id: '',
+          imageUrl: "",
         ),
       );
       await db.collection("users").doc(userId).set(data);

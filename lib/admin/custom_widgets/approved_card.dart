@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mcx_live/utils/color_constants.dart';
+import '../../utils/google_font.dart';
 
 class ApprovedCardWidget extends StatelessWidget {
   const ApprovedCardWidget(
@@ -9,7 +11,7 @@ class ApprovedCardWidget extends StatelessWidget {
       required this.email,
       required this.docId,
       required this.userId,
-      required this.approvedDays});
+      required this.amount});
 
   final int slNo;
   final String refNo;
@@ -17,103 +19,150 @@ class ApprovedCardWidget extends StatelessWidget {
   final String email;
   final String docId;
   final String userId;
-  final int approvedDays;
+  final String amount;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+    return Card(
+      elevation: 5,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
         ),
-        color: Colors.white10,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 60,
-                    height: 40,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF5C249),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: Text(
-                        "$slNo",
-                        style: const TextStyle(
-                          color: Color(0xFF16171D),
-                          fontSize: 24,
-                        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 40,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    gradient: const LinearGradient(
+                      begin: Alignment(0, -1),
+                      end: Alignment(0, 1),
+                      colors: <Color>[kGradient1, kGradient2],
+                      stops: <double>[0, 5],
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      slNo.toString(),
+                      style: SafeGoogleFont(
+                        'Sofia Pro',
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xffffffff),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 30),
-                  Text(
-                    refNo,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                Text(
+                  // fGV (143:98)
+                  refNo,
+                  style: SafeGoogleFont(
+                    'Sofia Pro',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
                   ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              Column(
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Name',
-                        style: TextStyle(color: Colors.grey, fontSize: 18),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Name:',
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff564c4c),
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: 36),
-                      Expanded(
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Email:',
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff564c4c),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Amount:',
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff564c4c),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
                           name,
-                          softWrap: true,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18),
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff000000),
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  Row(
-                    children: [
-                      const Text(
-                        'Email',
-                        style: TextStyle(color: Colors.grey, fontSize: 18),
-                      ),
-                      const SizedBox(width: 40),
-                      Expanded(
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
                           email,
-                          softWrap: true,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18),
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff000000),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          amount,
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff000000),
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 37),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

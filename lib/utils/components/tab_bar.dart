@@ -16,7 +16,7 @@ class CustomTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.045,
+      height: MediaQuery.of(context).size.height * 0.070,
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       decoration: const BoxDecoration(

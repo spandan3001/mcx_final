@@ -1,7 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import '../../models/user_model.dart';
+import 'package:mcx_live/admin/custom_widgets/show_dialog_return.dart';
+import 'package:mcx_live/services/firestore_services.dart';
+import 'package:mcx_live/utils/color_constants.dart';
+import '../../utils/google_font.dart';
+import 'card_widget_button.dart';
 
 class CardWidget extends StatelessWidget {
   const CardWidget(
@@ -12,7 +14,7 @@ class CardWidget extends StatelessWidget {
       required this.email,
       required this.docId,
       required this.userId,
-      required this.approvedDays});
+      required this.amount});
 
   final int slNo;
   final String refNo;
@@ -20,204 +22,195 @@ class CardWidget extends StatelessWidget {
   final String email;
   final String docId;
   final String userId;
-  final int approvedDays;
+  final String amount;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+    return Card(
+      elevation: 5,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
         ),
-        color: Colors.white10,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 60,
-                    height: 40,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF5C249),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: Text(
-                        "$slNo",
-                        style: const TextStyle(
-                          color: Color(0xFF16171D),
-                          fontSize: 24,
-                        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 40,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    gradient: const LinearGradient(
+                      begin: Alignment(0, -1),
+                      end: Alignment(0, 1),
+                      colors: <Color>[kGradient1, kGradient2],
+                      stops: <double>[0, 5],
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      slNo.toString(),
+                      style: SafeGoogleFont(
+                        'Sofia Pro',
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xffffffff),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 30),
-                  Text(
-                    refNo,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                Text(
+                  // fGV (143:98)
+                  refNo,
+                  style: SafeGoogleFont(
+                    'Sofia Pro',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
                   ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              Column(
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Name',
-                        style: TextStyle(color: Colors.grey, fontSize: 22),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Name:',
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff564c4c),
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: 36),
-                      Expanded(
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Email:',
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff564c4c),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Amount:',
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff564c4c),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
                           name,
-                          softWrap: true,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff000000),
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  Row(
-                    children: [
-                      const Text(
-                        'Email',
-                        style: TextStyle(color: Colors.grey, fontSize: 22),
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width * 0.5,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              email,
+                              maxLines: 1,
+                              style: SafeGoogleFont(
+                                'Sofia Pro',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                color: const Color(0xff000000),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: 40),
-                      Expanded(
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          email,
-                          softWrap: true,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 21),
+                          amount,
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff000000),
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 37),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 130,
-                    height: 68,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 7),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection("payments")
-                              .doc(docId)
-                              .update(
-                            {"approved": true},
-                          );
-                          FirebaseFirestore.instance
-                              .collection("users")
-                              .doc(userId)
-                              .update(
-                            {
-                              "subscribed": true,
-                              "start_time": FieldValue.serverTimestamp(),
-                              'free': 10000000,
-                            },
-                          ).whenComplete(
-                            () async {
-                              var snapshot = await FirebaseFirestore.instance
-                                  .collection("users")
-                                  .doc(userId)
-                                  .get();
-
-                              UserModel userData =
-                                  UserModel.fromSnapshot(snapshot);
-                              // Timestamp start_time =
-                              //     Timestamp.fromMillisecondsSinceEpoch(
-                              //         userData.subscriptionStartTime);
-
-                              // DateTime end_time = start_time.toDate().add(
-                              //       Duration(
-                              //         days: approvedDays,
-                              //       ),
-                              //     );
-                              // FirebaseFirestore.instance
-                              //     .collection("users")
-                              //     .doc(userId)
-                              //     .update(
-                              //   {"end_time": end_time},
-                              // );
-                            },
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF5C249),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(35),
-                          ),
-                        ),
-                        child: const Text(
-                          'Accept',
-                          style: TextStyle(
-                            color: Color(0xFF16171D),
-                            fontSize: 25,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 50),
-                  SizedBox(
-                    width: 130,
-                    height: 68,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 7),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection("payments")
-                              .doc(docId)
-                              .delete();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF5C249),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(35),
-                          ),
-                        ),
-                        child: const Text(
-                          'Reject',
-                          style: TextStyle(
-                            color: Color(0xFF16171D),
-                            fontSize: 25,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                CardButton(
+                  name: 'Accept',
+                  onPressed: () async {
+                    final bool? result = await confirm(context);
+                    if (result != null && result) {
+                      accept();
+                    }
+                  },
+                ),
+                CardButton(
+                  name: 'Reject',
+                  onPressed: () async {
+                    final bool? result = await confirm(context);
+                    if (result != null && result) {
+                      reject();
+                    }
+                  },
+                )
+              ],
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  Future<bool?> confirm(BuildContext context) async {
+    return await showDialogReturn(context,
+        text: "Are you sure?", title: "Confirm");
+  }
+
+  void accept() {
+    CloudService.paymentCollection.doc(docId).update({"approved": true});
+  }
+
+  void reject() {
+    CloudService.paymentCollection.doc(docId).delete();
   }
 }

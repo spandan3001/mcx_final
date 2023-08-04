@@ -29,11 +29,11 @@ class AboutScreen extends StatelessWidget {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          width: w,
-          height: h,
-          color: Colors.white,
+      body: Container(
+        width: w,
+        height: h,
+        color: Colors.white,
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -115,6 +115,7 @@ class AboutScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.1,
         child: Image.asset(
           "images/line chart.png",
           fit: BoxFit.fill,

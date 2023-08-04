@@ -1,13 +1,11 @@
 import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mcx_live/provider_classes/user_detials_provider.dart';
+import 'package:mcx_live/provider_classes/admin_details_provider.dart';
+import 'package:mcx_live/provider_classes/user_details_provider.dart';
+import 'package:mcx_live/services/firestore_services.dart';
 import 'package:provider/provider.dart';
-
 import '../screens/home_screen/home_screen.dart';
-import '../admin_home.dart';
 import '../login_register/login_or_register.dart';
 import '../models/admin_model.dart';
 import '../models/user_model.dart';
@@ -21,12 +19,25 @@ class MyAuth extends StatefulWidget {
 }
 
 class _MyAuthState extends State<MyAuth> {
-  final _db = FirebaseFirestore.instance;
+  Future<AdminModel> getAdmin(email) async {
+    final snapshot = await CloudService.adminCollection
+        .where("email", isEqualTo: email)
+        .get();
+    return snapshot.docs.map((e) => AdminModel.fromSnapshot(e)).single;
+  }
 
-  Future<UserModel> getUser(email) async {
-    final snapshot =
-        await _db.collection("users").where("email", isEqualTo: email).get();
-    return snapshot.docs.map((e) => UserModel.fromSnapshot(e)).single;
+  void setAdminData(AdminModel? adminModel, BuildContext context) {
+    if (adminModel != null) {
+      Provider.of<AdminProvider>(context, listen: false).setAdmin(adminModel);
+    } else {
+      CloudService.adminCollection
+          .get()
+          .then((value) =>
+              value.docs.map((e) => AdminModel.fromSnapshot(e)).single)
+          .then((adminModel) {
+        Provider.of<AdminProvider>(context, listen: false).setAdmin(adminModel);
+      });
+    }
   }
 
   @override
@@ -42,12 +53,13 @@ class _MyAuthState extends State<MyAuth> {
             future: getAdmin(email),
             builder: (context, snapshotAdmin) {
               if (snapshotAdmin.hasData) {
-                //AdminModel adminData = snapshotAdmin.data as AdminModel;
-                return const HomeScreen();
+                AdminModel adminModel = snapshotAdmin.data!;
+                setAdminData(adminModel, context);
+                return const SidePanelScreen();
               } else {
+                setAdminData(null, context);
                 return StreamBuilder(
-                  stream: _db
-                      .collection("users")
+                  stream: CloudService.userCollection
                       .where("email", isEqualTo: email)
                       .snapshots(),
                   builder: (context, userSnapshot) {
@@ -77,11 +89,5 @@ class _MyAuthState extends State<MyAuth> {
         }
       },
     );
-  }
-
-  Future<AdminModel> getAdmin(email) async {
-    final snapshot =
-        await _db.collection("admin").where("email", isEqualTo: email).get();
-    return snapshot.docs.map((e) => AdminModel.fromSnapshot(e)).single;
   }
 }

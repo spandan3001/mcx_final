@@ -4,7 +4,7 @@ import 'package:mcx_live/utils/google_font.dart';
 Future<void> showAlertDialog(BuildContext context,
     {required String text,
     required String title,
-    bool optionNo = true,
+    bool optionNo = false,
     VoidCallback? onPressed}) async {
   return showDialog<void>(
     context: context,

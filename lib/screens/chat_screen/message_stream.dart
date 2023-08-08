@@ -18,6 +18,7 @@ class MessageStream extends StatelessWidget {
     for (MessageModel messageModel in messages) {
       final textMessage = messageModel.text;
       final textSender = messageModel.email;
+      final timeStamp = messageModel.timestamp;
 
       final userMail =
           Provider.of<UserProvider>(context, listen: false).getEmail();
@@ -27,6 +28,7 @@ class MessageStream extends StatelessWidget {
           text: textMessage.trim(),
           sender: textSender,
           isMe: userMail == textSender ? true : false,
+          dateTime: timeStamp.toDate(),
         ),
       );
     }

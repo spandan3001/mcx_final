@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mcx_live/services/firestore_services.dart';
 import 'package:mcx_live/ui_screen.dart';
 import 'package:mcx_live/utils/components/app_bar.dart';
+import '../screens/wallet/utils/enums.dart';
 import 'custom_widgets/card_widget.dart';
 import '../models/payment_model.dart';
 
@@ -42,12 +43,13 @@ class _AddRemoveScreenState extends State<AddRemoveScreen> {
                   PaymentModel paymentModel =
                       PaymentModel.fromSnapshot(message);
 
-                  if (paymentModel.approved == false) {
+                  if (paymentModel.approved == false &&
+                      paymentModel.type == TypeOfSubmit.add.name) {
                     listReq.add(
                       CardWidget(
                         docId: message.id,
                         slNo: count++,
-                        refNo: paymentModel.refId,
+                        refNo: paymentModel.refId ?? "",
                         name: paymentModel.firstName,
                         email: paymentModel.email,
                         userId: paymentModel.id,

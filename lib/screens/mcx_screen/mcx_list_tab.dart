@@ -11,6 +11,8 @@ class MCXListScreen extends StatefulWidget {
 class _MCXListScreenState extends State<MCXListScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Test();
+    return const Column(
+      children: [],
+    );
   }
 }

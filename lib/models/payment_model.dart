@@ -6,7 +6,7 @@ class PaymentModel {
   final String? secondName;
   final String email;
   final String number;
-  final String refId;
+  final String? refId;
   final String type;
   final bool approved;
   final String amount;
@@ -14,7 +14,7 @@ class PaymentModel {
   const PaymentModel({
     required this.firstName,
     this.secondName,
-    required this.refId,
+    this.refId,
     required this.type,
     required this.approved,
     required this.amount,
@@ -46,7 +46,7 @@ class PaymentModel {
       "number": paymentModel.number,
       "id": paymentModel.id,
       "approved": paymentModel.approved,
-      "refId": paymentModel.refId,
+      "refId": paymentModel.refId ?? "",
       "amount": paymentModel.amount,
       "type": paymentModel.type
     };

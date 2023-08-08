@@ -43,7 +43,7 @@ class HistoryScreen extends StatelessWidget {
                       ApprovedCardWidget(
                         docId: message.id,
                         slNo: count++,
-                        refNo: paymentModel.refId,
+                        refNo: paymentModel.refId ?? "",
                         name: paymentModel.firstName,
                         email: paymentModel.email,
                         userId: paymentModel.id,

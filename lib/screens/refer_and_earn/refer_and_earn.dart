@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:mcx_live/models/user_model.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../provider_classes/user_details_provider.dart';
 import '../../utils/components/show_dialog.dart';
@@ -123,7 +122,7 @@ class _ReferEarnState extends State<ReferEarn> {
                       const SizedBox(width: 50),
                       TextButton(
                         onPressed: () {
-                          const val = ClipboardData(text: "SPANDAN");
+                          final val = ClipboardData(text: userModel.referCode);
                           Clipboard.setData(val);
                         },
                         child: const Text(

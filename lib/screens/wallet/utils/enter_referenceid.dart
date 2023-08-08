@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mcx_live/utils/google_font.dart';
 import '../../../utils/form_validator.dart';
 
-Future<bool?> getRefInputDialog(BuildContext context,
+Future<(bool, String)?> getRefInputDialog(BuildContext context,
     {required String title,
-    required TextEditingController controller,
-    required,
+    required String text,
     VoidCallback? onPressed}) async {
+  TextEditingController controller = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  return showDialog<bool>(
+  return showDialog<(bool, String)>(
     context: context,
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
@@ -27,8 +27,8 @@ Future<bool?> getRefInputDialog(BuildContext context,
             children: <Widget>[
               FormValidationTextField(
                 formKey: formKey,
-                labelText: "Ref ID",
-                hintText: "please enter the reference id",
+                labelText: title,
+                hintText: text,
                 controller: controller,
               ),
             ],
@@ -41,7 +41,7 @@ Future<bool?> getRefInputDialog(BuildContext context,
               if (onPressed != null) {
                 onPressed();
               }
-              Navigator.of(context).pop(false);
+              Navigator.of(context).pop((false, controller.text));
             },
           ),
           TextButton(
@@ -52,7 +52,7 @@ Future<bool?> getRefInputDialog(BuildContext context,
               }
               if (formKey.currentState!.validate()) {
                 formKey.currentState!.save();
-                Navigator.of(context).pop(true);
+                Navigator.of(context).pop((true, controller.text));
               }
             },
           ),

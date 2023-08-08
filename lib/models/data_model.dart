@@ -1,33 +1,53 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'bid_price_model.dart';
+
 class DataModel {
-  final String commodity;
-  final String price;
-  final String chg;
-  final String chgPercent;
-  final String open;
-  final String high;
-  final String low;
-  final String time;
+  final String id;
+  final String token;
+  final String lastTradedPrice;
+  final String openPriceDay;
+  final String highPriceDay;
+  final String lowPriceDay;
+  final String closePrice;
+  final String upperCircuit;
+  final String lowerCircuit;
+  final String buy;
+  final String sell;
 
-  const DataModel(
-      {required this.commodity,
-      required this.price,
-      required this.chg,
-      required this.chgPercent,
-      required this.open,
-      required this.low,
-      required this.time,
-      required this.high});
+  const DataModel({
+    required this.token,
+    required this.id,
+    required this.lastTradedPrice,
+    required this.openPriceDay,
+    required this.highPriceDay,
+    required this.closePrice,
+    required this.lowerCircuit,
+    required this.lowPriceDay,
+    required this.upperCircuit,
+    required this.sell,
+    required this.buy,
+  });
 
-  factory DataModel.fromSnapshot(List<dynamic> data) {
+  factory DataModel.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data()!;
+    final BidPriceModel bidPriceModelSell =
+        BidPriceModel.fromSnapshot(data['best_five_data'][5]);
+    final BidPriceModel bidPriceModelBuy =
+        BidPriceModel.fromSnapshot(data['best_five_data'][0]);
     return DataModel(
-      commodity: data[0],
-      price: data[1],
-      chg: data[2],
-      chgPercent: data[3],
-      open: data[4],
-      high: data[5],
-      low: data[6],
-      time: data[7],
+      id: document.id,
+      token: data['token'],
+      lastTradedPrice: data['last_traded_price'],
+      openPriceDay: data['open_price_day'],
+      highPriceDay: data['high_price_day'],
+      closePrice: data['close_price'],
+      lowerCircuit: data['lower_circuit'],
+      lowPriceDay: data['low_price_day'],
+      upperCircuit: data['upper_circuit'],
+      sell: bidPriceModelSell.buySellPrice,
+      buy: bidPriceModelBuy.buySellPrice,
     );
   }
 }

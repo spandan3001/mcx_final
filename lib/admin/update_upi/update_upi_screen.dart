@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mcx_live/provider_classes/admin_details_provider.dart';
 import 'package:mcx_live/services/firestore_services.dart';
 import 'package:mcx_live/utils/color_constants.dart';
+import 'package:mcx_live/utils/components/show_dialog.dart';
 import 'package:mcx_live/utils/text_style.dart';
 import 'package:provider/provider.dart';
 import '../../ui_screen.dart';
@@ -113,6 +115,21 @@ class _UpdateUpiScreenState extends State<UpdateUpiScreen> {
                                 child: IconButton(
                                   onPressed: () async {
                                     await pickImage();
+                                    if (selectedImage != null) {
+                                      TaskSnapshot? taskSnapshot =
+                                          await CloudStorage.upload(
+                                              selectedImage!, "scanner.jpg");
+                                      String? tempUrl = await taskSnapshot?.ref
+                                          .getDownloadURL();
+                                      if (tempUrl != null) updateImage(tempUrl);
+                                      showAlertDialog(context,
+                                          text: "uploaded successfully",
+                                          title: "status");
+                                    } else {
+                                      showAlertDialog(context,
+                                          text: "something went wrong",
+                                          title: "status");
+                                    }
                                   },
                                   icon: Image.asset(
                                     'images/upload.png',
@@ -146,10 +163,6 @@ class _UpdateUpiScreenState extends State<UpdateUpiScreen> {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
                               await updateUpi();
-                              if (selectedImage != null) {
-                                CloudStorage.upload(
-                                    selectedImage!, "scanner.jpg");
-                              }
                             }
                           },
                           borderRadius: BorderRadius.circular(10),
@@ -203,5 +216,10 @@ class _UpdateUpiScreenState extends State<UpdateUpiScreen> {
   Future<void> updateUpi() async {
     Provider.of<AdminProvider>(context, listen: false)
         .updateDB({"upiId": controller.text});
+  }
+
+  Future<void> updateImage(String url) async {
+    Provider.of<AdminProvider>(context, listen: false)
+        .updateDB({"imageUrl": url});
   }
 }

@@ -1,0 +1,34 @@
+Future<void> getData(String rawData) async {
+    await Future.delayed(const Duration(seconds: 3)).whenComplete(() async {
+      final comeData = await controller.runJavaScriptReturningResult(
+          "document.querySelector('#cont-1 > div.resp-table').textContent");
+
+      String data = "$comeData".replaceAll(' ', '').replaceAll(r'\n', ' ');
+      List<String> stringData = data.split(' ');
+      List<List<String>> finalData = [];
+      int indexForCommodity = 0;
+      List<String> chuckData = [];
+
+      indexForCommodity++;
+      print(stringData);
+      for (String e in stringData) {
+        if (e != '"' && e != "null") {
+          chuckData.add(e);
+          if (indexForCommodity == 36) {
+            indexForCommodity = 0;
+            finalData.add(chuckData);
+            chuckData = [];
+          }
+          indexForCommodity++;
+        }
+      }
+      print(finalData[7]);
+    });
+  }
+
+  void getTableData(String rawData) {
+    dom.Document html = parse(rawData);
+    dom.Element? price = html.querySelector(
+        '#highcharts-d804rtz-1757 > div > span > table > tbody > tr:nth-child(1) > td > b');
+    print(price?.className);
+  }

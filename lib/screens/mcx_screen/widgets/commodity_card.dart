@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../models/data_model.dart';
 import '../../../utils/google_font.dart';
 
@@ -27,153 +26,142 @@ int getX() {
 class _CommodityCardState extends State<CommodityCard> {
   @override
   Widget build(BuildContext context) {
+    double baseWidth = 360;
+    double fem = MediaQuery.sizeOf(context).width / baseWidth;
+    double fFem = fem * 0.97;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
         elevation: 5,
         child: Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5),
+              boxShadow: const [
+                BoxShadow(
+                    color: Colors.green,
+                    offset: Offset(-7, 0),
+                    blurRadius: 6,
+                    spreadRadius: -6)
+              ]),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: widget.dataModel.commodity.length * 20,
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                  child: Text(
-                    widget.dataModel.commodity,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        "GOLD",
+                        style: SafeGoogleFont(
+                          'Sofia Pro',
+                          fontSize: fFem * 12,
+                          color: const Color(0xff1d3a6f),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        "22Aug",
+                        style: SafeGoogleFont(
+                          'Sofia Pro',
+                          fontSize: fFem * 12,
+                          color: const Color(0xff1d3a6f),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    widget.dataModel.lastTradedPrice,
                     style: SafeGoogleFont(
                       'Sofia Pro',
-                      fontSize: 20,
+                      fontSize: fFem * 14,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xff1d3a6f),
                     ),
                   ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 70,
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        const Text("change"),
-                        const Divider(
-                          color: Colors.black,
-                          height: 10,
+                  Row(
+                    children: [
+                      Text(
+                        "0.75",
+                        style: SafeGoogleFont(
+                          'Sofia Pro',
+                          fontSize: fFem * 12,
+                          color: Colors.green,
                         ),
-                        Text(widget.dataModel.chg),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 70,
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        const Text("change%"),
-                        const Divider(
-                          color: Colors.black,
-                          height: 10,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        "(0.34%)",
+                        style: SafeGoogleFont(
+                          'Sofia Pro',
+                          fontSize: fFem * 12,
+                          color: const Color(0xff1d3a6f),
                         ),
-                        Text(widget.dataModel.chgPercent),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 70,
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
+                  SizedBox(
+                    height: 15,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const Text("open"),
-                        Text(widget.dataModel.open),
+                        Text(
+                          widget.dataModel.openPriceDay,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        const VerticalDivider(
+                          width: 25,
+                          thickness: 1,
+                          indent: 2,
+                          endIndent: 1,
+                          color: Colors.black,
+                        ),
+                        Text(
+                          widget.dataModel.highPriceDay,
+                          style: const TextStyle(fontSize: 16),
+                        ),
                       ],
                     ),
                   ),
-                  Container(
-                    width: 70,
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        const Text("high"),
-                        const Divider(
-                          color: Colors.black,
-                          height: 10,
-                        ),
-                        Text(widget.dataModel.high),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 70,
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        const Text("low"),
-                        const Divider(
-                          color: Colors.black,
-                          height: 10,
-                        ),
-                        Text(widget.dataModel.low),
-                      ],
-                    ),
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Text("O:", style: TextStyle(fontSize: 12.5)),
+                          Text(widget.dataModel.openPriceDay,
+                              style: const TextStyle(fontSize: 12.5)),
+                        ],
+                      ),
+                      const SizedBox(width: 5),
+                      Row(
+                        children: [
+                          const Text("H:", style: TextStyle(fontSize: 12.5)),
+                          Text(widget.dataModel.highPriceDay,
+                              style: const TextStyle(fontSize: 12.5)),
+                        ],
+                      ),
+                      const SizedBox(width: 5),
+                      Row(
+                        children: [
+                          const Text("L:", style: TextStyle(fontSize: 12.5)),
+                          Text(widget.dataModel.lowPriceDay,
+                              style: const TextStyle(fontSize: 12.5)),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
-              ),
-              const SizedBox(height: 10),
-              Container(
-                width: widget.dataModel.time.length * 15,
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                    child: Text(
-                  widget.dataModel.time,
-                  style: SafeGoogleFont(
-                    'Sofia Pro',
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xff1d3a6f),
-                  ),
-                )),
               ),
             ],
           ),
@@ -182,3 +170,29 @@ class _CommodityCardState extends State<CommodityCard> {
     );
   }
 }
+
+// Row(
+// mainAxisAlignment: MainAxisAlignment.start,
+// children: [
+// Column(
+// children: [
+// const Text("uppr"),
+// const Divider(
+// color: Colors.black,
+// height: 10,
+// ),
+// Text(widget.dataModel.upperCircuit),
+// ],
+// ),
+// Column(
+// children: [
+// const Text("lwr"),
+// const Divider(
+// color: Colors.black,
+// height: 10,
+// ),
+// Text(widget.dataModel.lowerCircuit),
+// ],
+// ),
+// ],
+// )

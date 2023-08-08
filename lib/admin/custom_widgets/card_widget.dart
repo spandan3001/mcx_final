@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mcx_live/admin/custom_widgets/show_dialog_return.dart';
 import 'package:mcx_live/services/firestore_services.dart';
 import 'package:mcx_live/utils/color_constants.dart';
+import 'package:provider/provider.dart';
+import '../../provider_classes/user_details_provider.dart';
 import '../../utils/google_font.dart';
 import 'card_widget_button.dart';
 
@@ -179,8 +181,8 @@ class CardWidget extends StatelessWidget {
                   name: 'Accept',
                   onPressed: () async {
                     final bool? result = await confirm(context);
-                    if (result != null && result) {
-                      accept();
+                    if (result!) {
+                      accept(context);
                     }
                   },
                 ),
@@ -206,7 +208,8 @@ class CardWidget extends StatelessWidget {
         text: "Are you sure?", title: "Confirm");
   }
 
-  void accept() {
+  void accept(BuildContext context) {
+    CloudService.userCollection.doc(userId).update({"wallet": amount});
     CloudService.paymentCollection.doc(docId).update({"approved": true});
   }
 

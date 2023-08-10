@@ -18,6 +18,10 @@ class SidePanelScreen extends StatefulWidget {
 class _SidePanelScreenState extends State<SidePanelScreen>
     with TickerProviderStateMixin {
   late TabController tabController;
+  List<DataModel> temp = [];
+  List<DataModel> listDataModel = [];
+
+  String dropDownValue = "10%";
   @override
   void initState() {
     super.initState();
@@ -61,38 +65,72 @@ class _SidePanelScreenState extends State<SidePanelScreen>
         ),
         drawer: drawer(context),
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                style: const TextStyle(
-                  color: Colors.black,
-                ),
-                cursorColor: Colors.black,
-                decoration: inputDecorationForTextField(
-                    label: "search", hint: "type gold to search GOLD"),
-                onChanged: (value) {
-                  if (value.isNotEmpty) {
-                    //getSearchData(value);
-                  } else {
-                    setState(() {
-                      //temp = data;
-                    });
-                  }
-                },
+              child: Row(
+                children: [
+                  Container(
+                    width: 200,
+                    height: 50,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: TextField(
+                      style: const TextStyle(
+                        color: Colors.black,
+                      ),
+                      cursorColor: Colors.black,
+                      decoration: inputDecorationForTextField(
+                          hint: "type gold to search GOLD"),
+                      onChanged: (value) {
+                        if (value.isNotEmpty) {
+                          //getSearchData(value);
+                        } else {
+                          setState(() {
+                            //temp = data;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      color: Colors.grey.shade100,
+                    ),
+                    child: IconButton(
+                      tooltip: "Add trade",
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.add,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(
               child: StreamBuilder(
                 stream: CloudService.mcxCollection.snapshots(),
                 builder: (context, snapshot) {
-                  DataModel dataModel =
-                      DataModel.fromSnapshot(snapshot.data!.docs.first);
                   if (snapshot.hasData) {
+                    listDataModel = snapshot.data!.docs
+                        .map((e) => DataModel.fromSnapshot(e))
+                        .toList();
                     return ListView.builder(
-                      itemCount: 5,
+                      itemCount: listDataModel.length,
                       itemBuilder: (BuildContext context, int index) =>
-                          CommodityCard(dataModel: dataModel),
+                          CommodityCard(
+                        dataModel: listDataModel[index],
+                        commodity: listDataModel[index].token,
+                      ),
                     );
                   } else {
                     return const Loading();

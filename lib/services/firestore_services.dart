@@ -17,6 +17,8 @@ class CloudService {
       db.collection("messages");
   static CollectionReference<Map<String, dynamic>> mcxCollection =
       db.collection("mcx");
+  static CollectionReference<Map<String, dynamic>> orderCollection =
+      db.collection("orders");
 }
 
 class CloudStorage {

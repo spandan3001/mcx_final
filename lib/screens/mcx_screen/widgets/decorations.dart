@@ -11,22 +11,5 @@ InputDecoration inputDecorationForTextField({String? label, String? hint}) =>
       hintStyle: const TextStyle(
         color: Colors.grey,
       ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(5),
-        borderSide: const BorderSide(
-          color: kBorderColor,
-        ),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(5),
-        borderSide: const BorderSide(
-          color: kBorderColor,
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(5),
-        borderSide: const BorderSide(
-          color: kBorderColor,
-        ),
-      ),
+      border: InputBorder.none,
     );

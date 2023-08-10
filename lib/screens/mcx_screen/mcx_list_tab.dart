@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../services/mcx_get_data.dart';
 
 class MCXListScreen extends StatefulWidget {
   const MCXListScreen({super.key});

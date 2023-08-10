@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mcx_live/admin/history_screen.dart';
 import 'package:mcx_live/screens/ongoing_history/trade_history_screen.dart';
-import 'package:mcx_live/screens/ongoing_history/trade_ongoing.dart';
+import 'package:mcx_live/screens/ongoing_history/trade_ongoing_screen.dart';
 import 'package:mcx_live/ui_screen.dart';
 import 'package:mcx_live/utils/color_constants.dart';
-import 'package:mcx_live/utils/components/app_bar.dart';
 
 import '../../utils/components/tab_bar.dart';
 import '../../utils/google_font.dart';
@@ -63,10 +62,10 @@ class _TabScreenState extends State<TabScreen>
                         tabs: [
                           Tab(
                             child: Text(
-                              "History",
+                              "Ongoing",
                               style: SafeGoogleFont(
                                 'Sofia Pro',
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xff1d3a6f),
                               ),
@@ -74,15 +73,15 @@ class _TabScreenState extends State<TabScreen>
                           ),
                           Tab(
                             child: Text(
-                              "Ongoing",
+                              "History",
                               style: SafeGoogleFont(
                                 'Sofia Pro',
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xff1d3a6f),
                               ),
                             ),
-                          )
+                          ),
                         ],
                         onTap: (value) {},
                       ),
@@ -94,7 +93,7 @@ class _TabScreenState extends State<TabScreen>
                 flex: 3,
                 child: TabBarView(
                     controller: tabController,
-                    children: const [TradeHistory(), TradeOngoing()]),
+                    children: const [TradeOngoing(), TradeHistory()]),
               )
             ],
           ),

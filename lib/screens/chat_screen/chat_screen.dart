@@ -74,7 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   CloudService.messageCollection.add({
                     'sender': email,
                     "text": textMessage,
-                    "timeStamp": DateTime.now()
+                    "timeStamp": FieldValue.serverTimestamp()
                   });
                 }
                 messageController.clear();

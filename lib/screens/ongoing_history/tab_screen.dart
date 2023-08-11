@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mcx_live/admin/history_screen.dart';
 import 'package:mcx_live/screens/ongoing_history/trade_history_screen.dart';
 import 'package:mcx_live/screens/ongoing_history/trade_ongoing_screen.dart';
 import 'package:mcx_live/ui_screen.dart';
 import 'package:mcx_live/utils/color_constants.dart';
-
 import '../../utils/components/tab_bar.dart';
 import '../../utils/google_font.dart';
 
@@ -27,6 +25,9 @@ class _TabScreenState extends State<TabScreen>
 
   @override
   Widget build(BuildContext context) {
+    double baseWidth = 360;
+    double fem = MediaQuery.sizeOf(context).width / baseWidth;
+    double fFem = fem * 0.97;
     return BackGround(
       child: SafeArea(
         child: Scaffold(
@@ -38,8 +39,8 @@ class _TabScreenState extends State<TabScreen>
                 children: [
                   const SizedBox(width: 5),
                   Container(
-                    width: 50,
-                    height: 50,
+                    width: 48 * fFem,
+                    height: 48 * fFem,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                       color: kGradient1,
@@ -65,7 +66,7 @@ class _TabScreenState extends State<TabScreen>
                               "Ongoing",
                               style: SafeGoogleFont(
                                 'Sofia Pro',
-                                fontSize: 18,
+                                fontSize: 18 * fFem,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xff1d3a6f),
                               ),
@@ -76,7 +77,7 @@ class _TabScreenState extends State<TabScreen>
                               "History",
                               style: SafeGoogleFont(
                                 'Sofia Pro',
-                                fontSize: 18,
+                                fontSize: 18 * fFem,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xff1d3a6f),
                               ),
@@ -90,7 +91,6 @@ class _TabScreenState extends State<TabScreen>
                 ],
               ),
               Expanded(
-                flex: 3,
                 child: TabBarView(
                     controller: tabController,
                     children: const [TradeOngoing(), TradeHistory()]),

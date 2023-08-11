@@ -5,17 +5,19 @@ class OrderModel {
   final String userId;
   final String email;
   final String type;
-  final String commodity;
+  final String token;
   final String placedPoint;
-  final Timestamp? timeStamp;
+  final String closedPoint;
+  final String amount;
+  final Timestamp timeStamp;
   final String option;
   final bool isActive;
-  final String? closedPrice;
 
   const OrderModel({
     required this.userId,
-    this.closedPrice,
-    required this.commodity,
+    required this.closedPoint,
+    required this.amount,
+    required this.token,
     required this.isActive,
     required this.option,
     required this.id,
@@ -29,7 +31,7 @@ class OrderModel {
       DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data()!;
     return OrderModel(
-      closedPrice: data["closedPrice"] ?? "",
+      closedPoint: data["closedPoint"],
       id: document.id,
       email: data['email'],
       timeStamp: data['timeStamp'] ?? Timestamp(100, 10),
@@ -38,7 +40,8 @@ class OrderModel {
       placedPoint: data['placedPrice'],
       isActive: data['isActive'],
       option: data['option'],
-      commodity: data['commodity'],
+      token: data['commodity'],
+      amount: data['amount'],
     );
   }
 }

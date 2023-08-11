@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mcx_live/screens/home_screen/drawer.dart';
+import 'package:mcx_live/services/api/api.dart';
 import 'package:mcx_live/ui_screen.dart';
-import '../../models/data_model.dart';
+import '../../models/data_model_1.dart';
+import '../../services/api/stream_controller.dart';
+import '../../six_moths_only/trade_symbol.dart';
 import '../../utils/components/circular_progress.dart';
 import '../../utils/google_font.dart';
 import 'package:mcx_live/screens/mcx_screen/widgets/commodity_card.dart';
 import 'package:mcx_live/screens/mcx_screen/widgets/decorations.dart';
-import 'package:mcx_live/services/firestore_services.dart';
 
 class SidePanelScreen extends StatefulWidget {
   const SidePanelScreen({Key? key}) : super(key: key);
@@ -22,11 +26,22 @@ class _SidePanelScreenState extends State<SidePanelScreen>
   List<DataModel> listDataModel = [];
 
   String dropDownValue = "10%";
+
+  String searchString = "";
   @override
   void initState() {
     super.initState();
+
     tabController = TabController(length: 2, vsync: this);
-    //test = data
+    Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      temp = listDataModel;
+      if (listDataModel.isNotEmpty) {
+        timer.cancel();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {});
+        });
+      }
+    });
   }
 
   @override
@@ -89,9 +104,7 @@ class _SidePanelScreenState extends State<SidePanelScreen>
                         if (value.isNotEmpty) {
                           //getSearchData(value);
                         } else {
-                          setState(() {
-                            //temp = data;
-                          });
+                          temp = listDataModel;
                         }
                       },
                     ),
@@ -106,7 +119,9 @@ class _SidePanelScreenState extends State<SidePanelScreen>
                     ),
                     child: IconButton(
                       tooltip: "Add trade",
-                      onPressed: () {},
+                      onPressed: () {
+                        getData();
+                      },
                       icon: const Icon(
                         Icons.add,
                         color: Colors.black,
@@ -118,18 +133,16 @@ class _SidePanelScreenState extends State<SidePanelScreen>
             ),
             Expanded(
               child: StreamBuilder(
-                stream: CloudService.mcxCollection.snapshots(),
+                stream: MyStreamController.stream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    listDataModel = snapshot.data!.docs
-                        .map((e) => DataModel.fromSnapshot(e))
-                        .toList();
+                    listDataModel = snapshot.data!;
+                    listDataModel.sort((a, b) => a.token.compareTo(b.token));
                     return ListView.builder(
-                      itemCount: listDataModel.length,
+                      itemCount: tradeSymbol.length,
                       itemBuilder: (BuildContext context, int index) =>
                           CommodityCard(
                         dataModel: listDataModel[index],
-                        commodity: listDataModel[index].token,
                       ),
                     );
                   } else {
@@ -144,12 +157,19 @@ class _SidePanelScreenState extends State<SidePanelScreen>
     );
   }
 
-// void getSearchData(String value) {
-//   setState(() {
-//     temp = data
-//         .where((element) =>
-//             element.commodity.toUpperCase().contains(value.toUpperCase()))
-//         .toList();
-//   });
-// }
+  // void getSearchData(String value) {
+  //   // this happens when stream is off
+  //
+  //   temp = listDataModel.where((element) {
+  //     return DataModel.getStringFromToken(element.token)
+  //         .toUpperCase()
+  //         .contains(value.toUpperCase());
+  //   }).toList();
+  // }
+
+  // bool getSearchDataReturn(String value) {
+  //   return DataModel.getStringFromToken(value)
+  //       .toUpperCase()
+  //       .contains(searchString.toUpperCase());
+  // }
 }

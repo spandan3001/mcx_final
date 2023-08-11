@@ -28,7 +28,7 @@ class _TradeHistoryState extends State<TradeHistory> {
                 itemBuilder: (context, index) => TradeHistoryCard(
                       placedPrice: orderModelList[index].placedPoint,
                       type: orderModelList[index].type,
-                      closePrice: orderModelList[index].closedPrice ?? "",
+                      closePrice: orderModelList[index].closedPoint,
                     ));
           } else {
             return const Loading();

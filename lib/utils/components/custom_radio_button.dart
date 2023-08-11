@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum TradeOptions { buy, sell }
+enum BuyORSell { buy, sell }
 
 class CustomRadioButton extends StatelessWidget {
   const CustomRadioButton(

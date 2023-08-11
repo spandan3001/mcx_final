@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mcx_live/screens/ongoing_history/utils/pop_down_ongoing.dart';
+import 'package:mcx_live/services/api/stream_controller.dart';
 import 'package:mcx_live/services/firestore_services.dart';
 import 'package:mcx_live/six_moths_only/trade_symbol.dart';
 import 'package:mcx_live/utils/components/circular_progress.dart';
-import '../../models/data_model.dart';
+import '../../models/data_model_1.dart';
 import '../../models/order_model.dart';
+import '../../utils/components/custom_radio_button.dart';
+import '../../utils/components/show_dialog.dart';
 import '../../utils/google_font.dart';
 
 class TradeOngoing extends StatefulWidget {
@@ -14,6 +18,7 @@ class TradeOngoing extends StatefulWidget {
 }
 
 class _TradeOngoingState extends State<TradeOngoing> {
+  DataModel? oldData;
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -25,18 +30,80 @@ class _TradeOngoingState extends State<TradeOngoing> {
             List<OrderModel> orderModelList = snapshot.data!.docs
                 .map((e) => OrderModel.fromSnapshot(e))
                 .toList();
+            return Column(
+              children: [
+                StreamBuilder(
+                    stream: MyStreamController.stream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<DataModel> dataModels = snapshot.data!;
+                        String buyPrice = "";
+                        String sellPrice = "";
+                        String priceOfType = "";
+                        double amount = 0.0;
+                        for (OrderModel order in orderModelList) {
+                          order.placedPoint;
+                          List<DataModel> dataModels = snapshot.data!
+                              .where((element) =>
+                                  element.token.contains(order.token))
+                              .toList();
+                          if (dataModels.isNotEmpty) {
+                            DataModel dataModel = dataModels[0];
 
-            return ListView.builder(
-                itemCount: orderModelList.length,
-                itemBuilder: (context, index) => TradeOngoingCard(
-                      placedPoint: orderModelList[index].placedPoint,
-                      type: orderModelList[index].type,
-                      commodity: orderModelList[index].commodity,
-                    ));
+                            buyPrice = dataModel.bestFiveData[5].buySellPrice;
+                            sellPrice = dataModel.bestFiveData[0].buySellPrice;
+                            if (order.type == BuyORSell.buy.name) {
+                              priceOfType = buyPrice;
+                            } else {
+                              priceOfType = sellPrice;
+                            }
+                            amount += difference(
+                                priceOfType, order.placedPoint, order.token);
+                          }
+                        }
+                        return Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Text(
+                            "Wallet :$amount ",
+                            style: SafeGoogleFont(
+                              'Sofia Pro',
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xff1d3a6f),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const Loading();
+                      }
+                    }),
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: orderModelList.length,
+                      itemBuilder: (context, index) => TradeOngoingCard(
+                            placedPoint: orderModelList[index].placedPoint,
+                            type: orderModelList[index].type,
+                            token: orderModelList[index].token,
+                            orderId: orderModelList[index].id,
+                          )),
+                ),
+              ],
+            );
           } else {
             return const Loading();
           }
         });
+  }
+
+  double difference(String actual, String ordered, String token) {
+    String commodity = DataModel.getStringFromToken(token);
+
+    double x = double.parse(actual);
+    double y = double.parse(ordered);
+    return ((x - y) * price[commodity]!).roundToDouble();
   }
 }
 
@@ -45,32 +112,64 @@ class TradeOngoingCard extends StatefulWidget {
     super.key,
     required this.placedPoint,
     required this.type,
-    required this.commodity,
+    required this.token,
+    required this.orderId,
   });
   final String placedPoint;
   final String type;
-  final String commodity;
+  final String token;
+  final String orderId;
 
   @override
   State<TradeOngoingCard> createState() => _TradeOngoingCardState();
 }
 
 class _TradeOngoingCardState extends State<TradeOngoingCard> {
+  DataModel? oldData;
+
+  late String buyPoint;
+  late String sellPoint;
+  late String pointOfType;
   @override
   Widget build(BuildContext context) {
     double baseWidth = 360;
     double fem = MediaQuery.sizeOf(context).width / baseWidth;
     double fFem = fem * 0.97;
     return GestureDetector(
-      onTap: () {},
+      onTap: () async {
+        final result = await showAlertDialog(context,
+            title: "Confirm", text: "want to close?", optionNo: true);
+        if (result != null) {
+          if (result) {
+            String amount = getDifferenceInPrice(widget.placedPoint,
+                pointOfType, DataModel.getStringFromToken(widget.token));
+            CloudService.orderCollection
+                .doc(widget.orderId)
+                .update({"amount": amount, "closedPoint": pointOfType});
+          }
+        }
+      },
       child: StreamBuilder(
-        stream: CloudService.mcxCollection
-            .where("token", isEqualTo: widget.commodity)
-            .snapshots(),
+        stream: MyStreamController.stream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            DataModel dataModel =
-                DataModel.fromSnapshot(snapshot.data!.docs.first);
+            List<DataModel> dataModels = snapshot.data!
+                .where((element) => element.token.contains(widget.token))
+                .toList();
+            DataModel dataModel;
+            if (dataModels.isNotEmpty) {
+              dataModel = dataModels[0];
+            } else {
+              dataModel = (oldData != null) ? oldData! : dataModels.first;
+            }
+            oldData = dataModel;
+            buyPoint = dataModel.bestFiveData[5].buySellPrice;
+            sellPoint = dataModel.bestFiveData[0].buySellPrice;
+            if (widget.type == BuyORSell.buy.name) {
+              pointOfType = buyPoint;
+            } else {
+              pointOfType = sellPoint;
+            }
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Card(
@@ -82,7 +181,7 @@ class _TradeOngoingCardState extends State<TradeOngoingCard> {
                     borderRadius: BorderRadius.circular(5),
                     boxShadow: [
                       BoxShadow(
-                          color: getTextColor(dataModel.buy),
+                          color: getTextColor(pointOfType),
                           offset: const Offset(-7, 0),
                           blurRadius: 4,
                           spreadRadius: -6)
@@ -98,7 +197,7 @@ class _TradeOngoingCardState extends State<TradeOngoingCard> {
                           Row(
                             children: [
                               Text(
-                                DataModel.getStringFromToken(widget.commodity),
+                                DataModel.getStringFromToken(widget.token),
                                 style: SafeGoogleFont(
                                   'Sofia Pro',
                                   fontSize: fFem * 18,
@@ -108,7 +207,7 @@ class _TradeOngoingCardState extends State<TradeOngoingCard> {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                DataModel.getExpiryFromToken(widget.commodity),
+                                DataModel.getExpiryFromToken(widget.token),
                                 style: SafeGoogleFont(
                                   'Sofia Pro',
                                   fontSize: fFem * 18,
@@ -134,18 +233,18 @@ class _TradeOngoingCardState extends State<TradeOngoingCard> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                "₹${getDifferenceInPrice(dataModel.buy, DataModel.getStringFromToken(widget.commodity))}",
+                                "₹${getDifferenceInPrice(widget.placedPoint, pointOfType, DataModel.getStringFromToken(widget.token))}",
                                 style: SafeGoogleFont(
                                   'Sofia Pro',
                                   fontSize: fFem * 18,
                                   fontWeight: FontWeight.bold,
-                                  color: getTextColor(dataModel.buy),
+                                  color: getTextColor(pointOfType),
                                 ),
                               ),
                               Row(
                                 children: [
                                   Text(
-                                    "LTP:₹${dataModel.lastTradedPrice}",
+                                    "LTP:${dataModel.lastTradedPrice}",
                                     style: SafeGoogleFont(
                                       'Sofia Pro',
                                       fontSize: fFem * 14,
@@ -159,11 +258,6 @@ class _TradeOngoingCardState extends State<TradeOngoingCard> {
                                       fontSize: fFem * 14,
                                     ),
                                   ),
-                                  // Text(
-                                  //   widget.placedPoint,
-                                  //   style: TextStyle(
-                                  //       color: getTextColor(dataModel.buy)),
-                                  // ),
                                 ],
                               ),
                             ],
@@ -197,10 +291,11 @@ class _TradeOngoingCardState extends State<TradeOngoingCard> {
     return (actual - placed).toString();
   }
 
-  String getDifferenceInPrice(String actualPoints, String commodity) {
-    double placed = double.parse(widget.placedPoint);
+  String getDifferenceInPrice(
+      String placedPoints, String actualPoints, String commodity) {
+    double placed = double.parse(placedPoints);
     double actual = double.parse(actualPoints);
 
-    return ((actual - placed) * price[commodity]!).toString();
+    return ((actual - placed) * price[commodity]!).roundToDouble().toString();
   }
 }

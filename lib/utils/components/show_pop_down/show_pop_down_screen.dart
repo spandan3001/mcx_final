@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:mcx_live/models/order_model.dart';
+import 'package:mcx_live/services/api/stream_controller.dart';
 import 'package:mcx_live/services/mcx_service.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:provider/provider.dart';
-import '../../../models/data_model.dart';
+import '../../../models/data_model_1.dart';
 import '../../../models/user_model.dart';
 import '../../../provider_classes/user_details_provider.dart';
 import '../../../services/firestore_services.dart';
+import '../../google_font.dart';
 import '../circular_progress.dart';
 import '../custom_radio_button.dart';
+import '../show_dialog.dart';
 
 class PopDownSheetForTrade extends StatefulWidget {
-  const PopDownSheetForTrade({super.key, required this.commodity});
-  final String commodity;
+  const PopDownSheetForTrade({super.key, required this.token});
+  final String token;
 
   @override
   State<PopDownSheetForTrade> createState() => _PopDownSheetForTradeState();
@@ -37,18 +40,18 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
     "90%",
     "100%"
   ];
-  final List<String> commodities = ["gold", "silver"];
   int indexOfList = 0;
   late UserModel userModel;
 
   int _selectedValue = 10;
   double _maxValue = 100;
   final double _minValue = 10;
+
+  DataModel? oldData;
   @override
   void initState() {
     super.initState();
     optionDropDownValue = dropList.last;
-    commoditySelected = commodities.last;
   }
 
   @override
@@ -75,6 +78,7 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                         .map((e) => OrderModel.fromSnapshot(e))
                         .toList();
                     return Container(
+                      height: MediaQuery.sizeOf(context).height * 0.4,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
@@ -94,14 +98,18 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Text(
                                 "quantity : $_selectedValue%",
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: fFem * 18),
+                                style: SafeGoogleFont(
+                                  'Sofia Pro',
+                                  fontSize: fFem * 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xff1d3a6f),
+                                ),
                               ),
                               Container(
                                 decoration: BoxDecoration(
@@ -109,8 +117,17 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                                     borderRadius: BorderRadius.circular(10)),
                                 child: NumberPicker(
                                   haptics: true,
-                                  textStyle: TextStyle(fontSize: fFem * 10),
-                                  itemHeight: fem * 50,
+                                  textStyle: SafeGoogleFont(
+                                    'Sofia Pro',
+                                    fontSize: fFem * 12,
+                                    color: const Color(0xff1d3a6f),
+                                  ),
+                                  selectedTextStyle: SafeGoogleFont(
+                                    'Sofia Pro',
+                                    fontSize: fFem * 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xff1d3a6f),
+                                  ),
                                   itemWidth: fem * 50,
                                   axis: Axis.horizontal,
                                   value: _selectedValue,
@@ -133,34 +150,57 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "Wallet:-${userModel.wallet}",
-                            style: TextStyle(fontSize: fFem * 20),
-                          ),
-                          const SizedBox(height: 10),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(20)),
-                            child: Text(
-                              "GOLD PRICE",
-                              style: TextStyle(fontSize: fFem * 20),
+                            "Wallet:-₹${userModel.wallet}",
+                            style: SafeGoogleFont(
+                              'Sofia Pro',
+                              fontSize: fFem * 18,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xff1d3a6f),
                             ),
                           ),
-                          const SizedBox(height: 5),
+                          const SizedBox(height: 10),
+
                           StreamBuilder(
-                            stream: CloudService.mcxCollection
-                                .where("token", isEqualTo: "254924")
-                                .snapshots(),
+                            stream: MyStreamController.stream,
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                DataModel dataModel = DataModel.fromSnapshot(
-                                    snapshot.data!.docs.first);
-                                buyPrice = dataModel.buy;
-                                sellPrice = dataModel.sell;
+                                List<DataModel> dataModels = snapshot.data!
+                                    .where((element) =>
+                                        element.token.contains(widget.token))
+                                    .toList();
+                                DataModel dataModel;
+                                if (dataModels.isNotEmpty) {
+                                  dataModel = dataModels[0];
+                                } else {
+                                  dataModel = (oldData != null)
+                                      ? oldData!
+                                      : dataModels.first;
+                                }
+                                oldData = dataModel;
+                                buyPrice =
+                                    dataModel.bestFiveData[0].buySellPrice;
+                                sellPrice =
+                                    dataModel.bestFiveData[5].buySellPrice;
 
                                 return Column(
                                   children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey.shade100,
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Text(
+                                        "${DataModel.getStringFromToken(dataModel.token)} PRICE",
+                                        style: SafeGoogleFont(
+                                          'Sofia Pro',
+                                          fontSize: fFem * 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color(0xff1d3a6f),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
@@ -168,14 +208,23 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                                         Column(
                                           children: [
                                             Container(
-                                                padding:
-                                                    const EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.grey.shade100,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                child: Text(dataModel.buy)),
+                                              padding: const EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.grey.shade100,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: Text(
+                                                buyPrice,
+                                                style: SafeGoogleFont(
+                                                  'Sofia Pro',
+                                                  fontSize: fFem * 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      const Color(0xff1d3a6f),
+                                                ),
+                                              ),
+                                            ),
                                             const SizedBox(height: 5),
                                             ElevatedButton(
                                               style: ElevatedButton.styleFrom(
@@ -183,32 +232,54 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                                                       Colors.green),
                                               onPressed: () {
                                                 onPressed(
-                                                    TradeOptions.buy, orders);
+                                                    BuyORSell.buy, orders);
                                               },
-                                              child: const Text("BUY"),
+                                              child: Text(
+                                                "BUY",
+                                                style: SafeGoogleFont(
+                                                  'Sofia Pro',
+                                                  fontSize: fFem * 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),
                                         Column(
                                           children: [
                                             Container(
-                                                padding:
-                                                    const EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.grey.shade100,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                child: Text(dataModel.sell)),
+                                              padding: const EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.grey.shade100,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: Text(
+                                                sellPrice,
+                                                style: SafeGoogleFont(
+                                                  'Sofia Pro',
+                                                  fontSize: fFem * 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      const Color(0xff1d3a6f),
+                                                ),
+                                              ),
+                                            ),
                                             const SizedBox(height: 5),
                                             ElevatedButton(
                                               style: ElevatedButton.styleFrom(
                                                   backgroundColor: Colors.red),
                                               onPressed: () {
                                                 onPressed(
-                                                    TradeOptions.sell, orders);
+                                                    BuyORSell.sell, orders);
                                               },
-                                              child: const Text("SELL"),
+                                              child: Text(
+                                                "SELL",
+                                                style: SafeGoogleFont(
+                                                  'Sofia Pro',
+                                                  fontSize: fFem * 18,
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -234,18 +305,23 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
         });
   }
 
-  Future<void> onPressed(
-      TradeOptions buyOrSell, List<OrderModel>? orders) async {
+  Future<void> onPressed(BuyORSell buyOrSell, List<OrderModel>? orders) async {
     bool result = await McxService.placeOrder(
         userId: userModel.id,
         userEmail: userModel.email,
-        commodity: widget.commodity,
-        price: buyOrSell == TradeOptions.buy ? buyPrice : sellPrice,
+        commodity: widget.token,
+        price: buyOrSell == BuyORSell.buy ? buyPrice : sellPrice,
         option: optionDropDownValue,
         type: buyOrSell.name,
         wallet: userModel.wallet,
         orders: orders);
-    print(result);
+    Navigator.pop(context);
+    if (result) {
+      showAlertDialog(context, title: "Done", text: "Successfully placed");
+    } else {
+      showAlertDialog(context,
+          title: "Error", text: "There was some error while palcing");
+    }
   }
 
   (bool, double) checkConditionReturnPattern(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mcx_live/admin/update_admin_screen.dart';
 import 'package:mcx_live/admin/update_upi/update_upi_screen.dart';
+import 'package:mcx_live/admin/users_list_screen.dart';
 import 'package:mcx_live/ui_screen.dart';
 import 'package:mcx_live/utils/components/app_bar.dart';
 import 'add_remove.dart';
@@ -23,6 +24,30 @@ class AdminHomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              HomeButton(
+                text: "Total Profit",
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AdminUpdateScreen(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 35),
+              HomeButton(
+                text: "Users",
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const UsersListScreen(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 35),
               HomeButton(
                 text: "Requests",
                 onPressed: () {

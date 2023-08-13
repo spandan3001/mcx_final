@@ -1,36 +1,22 @@
 import 'package:flutter/material.dart';
-import '../../../models/data_model_1.dart';
+import '../../../models/data_model.dart';
 import '../../../utils/components/show_pop_down/show_pop_down_screen.dart';
 import '../../../utils/google_font.dart';
 
-class CommodityCard extends StatefulWidget {
+class CommodityCard extends StatelessWidget {
   const CommodityCard({
     super.key,
     required this.dataModel,
+    required this.colorSet,
   });
 
   final DataModel dataModel;
-
-  @override
-  State<CommodityCard> createState() => _CommodityCardState();
-}
-
-class _CommodityCardState extends State<CommodityCard> {
-  void test() {
-    int oldX, newX;
-    Color color;
-    oldX = newX = 10;
-    newX = getX();
-    color = newX <= oldX ? color = Colors.red : Colors.green;
-  }
-
-  int getX() {
-    return 20;
-  }
+  final ColorModel colorSet;
 
   @override
   Widget build(BuildContext context) {
-    //print(widget.commodity);
+    String actualBuyPoint = dataModel.bestFiveData[5].buySellPrice;
+    String actualSellPoint = dataModel.bestFiveData[0].buySellPrice;
     double baseWidth = 360;
     double w = MediaQuery.sizeOf(context).width;
     double fem = w / baseWidth;
@@ -42,7 +28,7 @@ class _CommodityCardState extends State<CommodityCard> {
           context: context,
           builder: (context) {
             return PopDownSheetForTrade(
-              token: widget.dataModel.token,
+              token: dataModel.token,
             );
           },
         );
@@ -59,8 +45,7 @@ class _CommodityCardState extends State<CommodityCard> {
               boxShadow: [
                 BoxShadow(
                     color: getColor(getDifferenceInPoints(
-                        widget.dataModel.lastTradedPrice,
-                        widget.dataModel.closePrice)),
+                        dataModel.lastTradedPrice, dataModel.closePrice)),
                     offset: const Offset(-7, 0),
                     blurRadius: 4,
                     spreadRadius: -6)
@@ -78,7 +63,7 @@ class _CommodityCardState extends State<CommodityCard> {
                       children: [
                         Text(
                           DataModel.getStringFromToken(
-                            widget.dataModel.token,
+                            dataModel.token,
                           ),
                           style: SafeGoogleFont(
                             'Sofia Pro',
@@ -90,7 +75,7 @@ class _CommodityCardState extends State<CommodityCard> {
                         const SizedBox(width: 5),
                         Text(
                           DataModel.getExpiryFromToken(
-                            widget.dataModel.token,
+                            dataModel.token,
                           ).substring(0, 5),
                           style: SafeGoogleFont(
                             'Sofia Pro',
@@ -101,28 +86,31 @@ class _CommodityCardState extends State<CommodityCard> {
                         ),
                       ],
                     ),
-                    Text(
-                      widget.dataModel.lastTradedPrice,
-                      style: SafeGoogleFont(
-                        'Sofia Pro',
-                        fontSize: fFem * 14,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xff1d3a6f),
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          dataModel.lastTradedPrice,
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: fFem * 16,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xff1d3a6f),
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          "(${getDifferenceInPoints(dataModel.lastTradedPrice, dataModel.closePrice)})",
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: fFem * 12,
+                            color: getColor(getDifferenceInPoints(
+                                dataModel.lastTradedPrice,
+                                dataModel.closePrice)),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      getDifferenceInPoints(widget.dataModel.lastTradedPrice,
-                          widget.dataModel.closePrice),
-                      style: SafeGoogleFont(
-                        'Sofia Pro',
-                        fontSize: fFem * 12,
-                        color: getColor(getDifferenceInPoints(
-                            widget.dataModel.lastTradedPrice,
-                            widget.dataModel.closePrice)),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
                   ],
                 ),
                 Column(
@@ -130,16 +118,20 @@ class _CommodityCardState extends State<CommodityCard> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: fFem * 16,
+                      height: fem * 20,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(
-                            widget.dataModel.bestFiveData[0].buySellPrice,
-                            style: SafeGoogleFont(
-                              'Sofia Pro',
-                              fontSize: fFem * 16,
-                              fontWeight: FontWeight.bold,
+                          Container(
+                            color: colorSet.sellColor,
+                            padding: const EdgeInsets.all(2),
+                            child: Text(
+                              actualSellPoint,
+                              style: SafeGoogleFont(
+                                'Sofia Pro',
+                                fontSize: fFem * 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           const VerticalDivider(
@@ -149,12 +141,15 @@ class _CommodityCardState extends State<CommodityCard> {
                             endIndent: 1,
                             color: Colors.black,
                           ),
-                          Text(
-                            widget.dataModel.bestFiveData[5].buySellPrice,
-                            style: SafeGoogleFont(
-                              'Sofia Pro',
-                              fontSize: fFem * 16,
-                              fontWeight: FontWeight.bold,
+                          Container(
+                            color: colorSet.buyColor,
+                            child: Text(
+                              actualBuyPoint,
+                              style: SafeGoogleFont(
+                                'Sofia Pro',
+                                fontSize: fFem * 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
@@ -175,7 +170,7 @@ class _CommodityCardState extends State<CommodityCard> {
                               ),
                             ),
                             Text(
-                              widget.dataModel.openPriceDay,
+                              dataModel.openPriceDay,
                               style: SafeGoogleFont(
                                 'Sofia Pro',
                                 fontSize: fFem * 12,
@@ -193,7 +188,7 @@ class _CommodityCardState extends State<CommodityCard> {
                                   fontSize: fFem * 12,
                                   fontWeight: FontWeight.bold,
                                 )),
-                            Text(widget.dataModel.highPriceDay,
+                            Text(dataModel.highPriceDay,
                                 style: SafeGoogleFont(
                                   'Sofia Pro',
                                   fontSize: fFem * 12,
@@ -211,7 +206,7 @@ class _CommodityCardState extends State<CommodityCard> {
                                   fontWeight: FontWeight.bold,
                                 )),
                             Text(
-                              widget.dataModel.lowPriceDay,
+                              dataModel.lowPriceDay,
                               style: SafeGoogleFont(
                                 'Sofia Pro',
                                 fontSize: fFem * 12,
@@ -245,28 +240,13 @@ class _CommodityCardState extends State<CommodityCard> {
   }
 }
 
-// Row(
-// mainAxisAlignment: MainAxisAlignment.start,
-// children: [
-// Column(
-// children: [
-// const Text("uppr"),
-// const Divider(
-// color: Colors.black,
-// height: 10,
-// ),
-// Text(widget.dataModel.upperCircuit),
-// ],
-// ),
-// Column(
-// children: [
-// const Text("lwr"),
-// const Divider(
-// color: Colors.black,
-// height: 10,
-// ),
-// Text(widget.dataModel.lowerCircuit),
-// ],
-// ),
-// ],
-// )
+class ColorModel {
+  ColorModel({required this.buyColor, required this.sellColor});
+  final Color buyColor;
+  final Color sellColor;
+
+  static Map<String, Color> toMap(ColorModel model) => {
+        'buy': model.buyColor,
+        'sell': model.sellColor,
+      };
+}

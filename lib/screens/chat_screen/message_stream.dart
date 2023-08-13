@@ -19,6 +19,7 @@ class MessageStream extends StatelessWidget {
       final textMessage = messageModel.text;
       final textSender = messageModel.email;
       final timeStamp = messageModel.timestamp;
+      final imageUrl = messageModel.imageUrl;
 
       final userMail =
           Provider.of<UserProvider>(context, listen: false).getEmail();
@@ -29,6 +30,7 @@ class MessageStream extends StatelessWidget {
           sender: textSender,
           isMe: userMail == textSender ? true : false,
           dateTime: timeStamp.toDate(),
+          imageUrl: imageUrl,
         ),
       );
     }

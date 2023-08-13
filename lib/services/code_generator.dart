@@ -8,5 +8,3 @@ class CodeGenerator {
     return id.toString().substring(0, 8);
   }
 }
-
-CodeGenerator generator = CodeGenerator();

@@ -16,7 +16,7 @@ InputDecoration kTextInputDecoration(
     hintText: hintText,
     hintStyle: const TextStyle(fontSize: 18, color: Colors.white),
     labelStyle: const TextStyle(fontSize: 18, color: Colors.white),
-    fillColor: Colors.black,
+    fillColor: Colors.white,
     filled: true,
     suffixIcon: suffixIcon,
     contentPadding: const EdgeInsets.fromLTRB(20, 10, 20, 10),

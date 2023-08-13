@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../utils/google_font.dart';
+
 class MessageBubble extends StatelessWidget {
   const MessageBubble(
       {super.key,
       required this.text,
       required this.sender,
       required this.isMe,
+      required this.imageUrl,
       required this.dateTime});
   final String text, sender;
   final bool isMe;
   final DateTime dateTime;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +30,50 @@ class MessageBubble extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 10.0,
                 color: Colors.black54,
+              ),
+            ),
+          if (imageUrl != null)
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => Container(
+                    padding: const EdgeInsets.all(20),
+                    color: Colors.grey.shade400,
+                    child: Column(
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "close",
+                            style: SafeGoogleFont(
+                              'Sofia Pro',
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Image.network(
+                            imageUrl!,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              child: SizedBox(
+                height: 180,
+                width: MediaQuery.sizeOf(context).width * 0.6,
+                child: Image.network(
+                  imageUrl!,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           Row(

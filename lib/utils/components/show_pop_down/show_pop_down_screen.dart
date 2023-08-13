@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mcx_live/models/order_model.dart';
 import 'package:mcx_live/services/api/stream_controller.dart';
 import 'package:mcx_live/services/mcx_service.dart';
-import 'package:numberpicker/numberpicker.dart';
 import 'package:provider/provider.dart';
-import '../../../models/data_model_1.dart';
+import '../../../models/data_model.dart';
 import '../../../models/user_model.dart';
 import '../../../provider_classes/user_details_provider.dart';
 import '../../../services/firestore_services.dart';
@@ -22,36 +21,23 @@ class PopDownSheetForTrade extends StatefulWidget {
 }
 
 class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
-  late String optionDropDownValue;
   late String commoditySelected;
   late String buyPrice;
   late String sellPrice;
-  final List<String> dropList = [
-    "10%",
-    "20%",
-    "25%",
-    "30%",
-    "40%",
-    "50%",
-    "60%",
-    "70%",
-    "75%",
-    "80%",
-    "90%",
-    "100%"
-  ];
   int indexOfList = 0;
   late UserModel userModel;
 
-  int _selectedValue = 10;
+  String _selectedValue = "1";
   double _maxValue = 100;
   final double _minValue = 10;
 
   DataModel? oldData;
+
+  late TextEditingController _controller;
   @override
   void initState() {
     super.initState();
-    optionDropDownValue = dropList.last;
+    _controller = TextEditingController(text: "1");
   }
 
   @override
@@ -71,6 +57,7 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
             return StreamBuilder(
                 stream: CloudService.orderCollection
                     .where("userId", isEqualTo: userModel.id)
+                    .where("isActive", isEqualTo: true)
                     .snapshots(),
                 builder: (context, orderSnapshot) {
                   if (orderSnapshot.hasData) {
@@ -78,7 +65,7 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                         .map((e) => OrderModel.fromSnapshot(e))
                         .toList();
                     return Container(
-                      height: MediaQuery.sizeOf(context).height * 0.4,
+                      height: MediaQuery.sizeOf(context).height * 0.6,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
@@ -111,40 +98,59 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                                   color: const Color(0xff1d3a6f),
                                 ),
                               ),
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: NumberPicker(
-                                  haptics: true,
-                                  textStyle: SafeGoogleFont(
-                                    'Sofia Pro',
-                                    fontSize: fFem * 12,
-                                    color: const Color(0xff1d3a6f),
+                              Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          double num = 0.1 +
+                                              double.parse(_selectedValue);
+                                          _selectedValue =
+                                              num.toString().substring(0, 3);
+                                          // final result =
+                                          //     checkConditionReturnPattern(
+                                          //         wallet: userModel.wallet,
+                                          //         orders: orders);
+                                          _controller = TextEditingController(
+                                              text: _selectedValue);
+                                        });
+                                      },
+                                      icon: const Icon(Icons.add)),
+                                  SizedBox(
+                                    width: 50,
+                                    child: TextField(
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedValue = value;
+                                        });
+                                      },
+                                      keyboardType: TextInputType.number,
+                                      textAlign: TextAlign.center,
+                                      controller: _controller,
+                                      decoration: const InputDecoration(
+                                          border: InputBorder.none),
+                                    ),
                                   ),
-                                  selectedTextStyle: SafeGoogleFont(
-                                    'Sofia Pro',
-                                    fontSize: fFem * 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xff1d3a6f),
+                                  IconButton(
+                                    onPressed: () {
+                                      double num = double.parse(_selectedValue);
+                                      if (num >= 0.0) {
+                                        setState(() {
+                                          _selectedValue = (num - 0.1)
+                                              .toString()
+                                              .substring(0, 3);
+                                          // final result =
+                                          //     checkConditionReturnPattern(
+                                          //         wallet: userModel.wallet,
+                                          //         orders: orders);
+                                          _controller = TextEditingController(
+                                              text: _selectedValue);
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(Icons.remove),
                                   ),
-                                  itemWidth: fem * 50,
-                                  axis: Axis.horizontal,
-                                  value: _selectedValue,
-                                  minValue: _minValue.toInt(),
-                                  maxValue: _maxValue.toInt(),
-                                  step:
-                                      10, // Set the step to 10 to allow selecting only multiples of ten
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedValue = value;
-                                      final result =
-                                          checkConditionReturnPattern(
-                                              wallet: userModel.wallet,
-                                              orders: orders);
-                                    });
-                                  },
-                                ),
+                                ],
                               ),
                             ],
                           ),
@@ -309,9 +315,9 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
     bool result = await McxService.placeOrder(
         userId: userModel.id,
         userEmail: userModel.email,
-        commodity: widget.token,
-        price: buyOrSell == BuyORSell.buy ? buyPrice : sellPrice,
-        option: optionDropDownValue,
+        token: widget.token,
+        placedPoint: buyOrSell == BuyORSell.buy ? buyPrice : sellPrice,
+        option: _selectedValue,
         type: buyOrSell.name,
         wallet: userModel.wallet,
         orders: orders);
@@ -320,7 +326,9 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
       showAlertDialog(context, title: "Done", text: "Successfully placed");
     } else {
       showAlertDialog(context,
-          title: "Error", text: "There was some error while palcing");
+          title: "Limit",
+          text:
+              "Sorry but you cant place the order.\n(Try decreasing the quantity)");
     }
   }
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mcx_live/services/api/stream_controller.dart';
 import 'package:mcx_live/utils/color_constants.dart';
 import 'package:provider/provider.dart';
-import '../../../models/data_model_1.dart';
+import '../../../models/data_model.dart';
 import '../../../models/user_model.dart';
 import '../../../provider_classes/user_details_provider.dart';
 import '../../../services/firestore_services.dart';

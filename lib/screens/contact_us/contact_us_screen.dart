@@ -179,26 +179,6 @@ class _ContactScreenState extends State<ContactScreen> {
                   ),
                 ),
                 const SizedBox(height: 32),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'Address',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      hintText: 'Enter Owner Address',
-                      hintStyle: TextStyle(color: Colors.black, fontSize: 19),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),

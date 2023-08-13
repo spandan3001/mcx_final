@@ -1,4 +1,5 @@
 final tradeSymbol = {
+  "000000": {"symbol": "PLATINUM23AUGFUT", "expiry": "31AUG2023"},
   "247117": {"symbol": "SILVERM23AUGFUT", "expiry": "31AUG2023"},
   "248401": {"symbol": "SILVERM23NOVFUT", "expiry": "30NOV2023"},
   "254351": {"symbol": "SILVERM24FEBFUT", "expiry": "29FEB2024"},
@@ -53,5 +54,7 @@ final price = {
   "NATURALGAS": 1250,
   "ZINC": 5000,
   "ALUMINIUM": 5000,
-  "LEAD": 5000
+  "LEAD": 5000,
+  "SILVERM": 30,
+  "PLATINUM": 100
 };

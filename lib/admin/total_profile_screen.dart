@@ -6,12 +6,11 @@ import '../utils/components/app_bar.dart';
 import '../utils/components/circular_progress.dart';
 
 class TotalProfitScreen extends StatelessWidget {
-  List<UserModel> listUserModel = [];
-
-  TotalProfitScreen({super.key});
+  const TotalProfitScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    List<UserModel> listUserModel = [];
     return Scaffold(
       appBar: appBar(
         title: "Total Profit",

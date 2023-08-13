@@ -4,8 +4,10 @@ class MessageModel {
   final String text;
   final String email;
   final Timestamp timestamp;
+  final String? imageUrl;
 
   const MessageModel({
+    this.imageUrl,
     required this.text,
     required this.email,
     required this.timestamp,
@@ -17,7 +19,8 @@ class MessageModel {
     return MessageModel(
       text: data['text'],
       email: data["sender"],
-      timestamp: data["timeStamp"],
+      timestamp: data["timeStamp"] ?? Timestamp(100, 100),
+      imageUrl: data['imageUrl'],
     );
   }
   static Map<String, Object> toMap(MessageModel userModel) {

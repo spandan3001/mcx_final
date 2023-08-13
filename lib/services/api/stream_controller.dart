@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../../models/data_model_1.dart';
+import '../../models/data_model.dart';
 
 class MyStreamController {
   static final StreamController<List<DataModel>> _controller =

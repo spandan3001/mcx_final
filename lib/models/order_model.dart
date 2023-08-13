@@ -37,10 +37,10 @@ class OrderModel {
       timeStamp: data['timeStamp'] ?? Timestamp(100, 10),
       type: data['type'],
       userId: data['userId'],
-      placedPoint: data['placedPrice'],
+      placedPoint: data['placedPoint'],
       isActive: data['isActive'],
       option: data['option'],
-      token: data['commodity'],
+      token: data['token'],
       amount: data['amount'],
     );
   }

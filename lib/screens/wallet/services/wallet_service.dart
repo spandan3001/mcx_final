@@ -21,7 +21,7 @@ bool withdrawAmount(BuildContext context, String amount, UserModel userModel) {
           approved: false,
           amount: "$amt",
           id: userModel.id,
-          number: userModel.number,
+          number: userModel.upiId ?? "",
           email: userModel.email,
           type: TypeOfSubmit.withdraw.name,
         ),
@@ -41,8 +41,8 @@ Future<bool> addAmount(
     BuildContext context, String amount, UserModel userModel) async {
   final result = await getRefInputDialog(
     context,
-    title: "Ref ID",
-    text: "please enter the reference id",
+    title: "utr number",
+    text: "please enter the utr number",
   );
   if (result!.$1) {
     try {
@@ -53,7 +53,7 @@ Future<bool> addAmount(
           approved: false,
           amount: amount,
           id: userModel.id,
-          number: userModel.number,
+          number: userModel.upiId ?? "",
           email: userModel.email,
           type: TypeOfSubmit.add.name));
       CloudService.paymentCollection.add(data);

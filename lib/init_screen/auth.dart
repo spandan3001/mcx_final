@@ -55,7 +55,9 @@ class _MyAuthState extends State<MyAuth> {
               if (snapshotAdmin.hasData) {
                 AdminModel adminModel = snapshotAdmin.data!;
                 setAdminData(adminModel, context);
-                return const SidePanelScreen();
+                return const SidePanelScreen(
+                  isAdmin: true,
+                );
               } else {
                 setAdminData(null, context);
                 return StreamBuilder(
@@ -68,9 +70,13 @@ class _MyAuthState extends State<MyAuth> {
                         UserModel userModel = userSnapshot.data!.docs
                             .map((e) => UserModel.fromSnapshot(e))
                             .single;
-                        Provider.of<UserProvider>(context, listen: false)
-                            .setUser(userModel);
-                        return const SidePanelScreen();
+                        Provider.of<UserProvider>(
+                          context,
+                          listen: false,
+                        ).setUser(userModel);
+                        return const SidePanelScreen(
+                          isAdmin: false,
+                        );
                       } else {
                         return const Loading();
                       }

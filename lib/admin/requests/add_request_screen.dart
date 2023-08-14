@@ -3,18 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:mcx_live/services/firestore_services.dart';
 import 'package:mcx_live/ui_screen.dart';
 import 'package:mcx_live/utils/components/app_bar.dart';
-import '../screens/wallet/utils/enums.dart';
-import 'custom_widgets/card_widget.dart';
-import '../models/payment_model.dart';
 
-class AddRemoveScreen extends StatefulWidget {
-  const AddRemoveScreen({super.key});
+import '../../models/payment_model.dart';
+import '../../screens/wallet/utils/enums.dart';
+import '../custom_widgets/card_widget.dart';
+
+class AddScreen extends StatefulWidget {
+  const AddScreen({super.key});
 
   @override
-  State<AddRemoveScreen> createState() => _AddRemoveScreenState();
+  State<AddScreen> createState() => _AddScreenState();
 }
 
-class _AddRemoveScreenState extends State<AddRemoveScreen> {
+class _AddScreenState extends State<AddScreen> {
   @override
   Widget build(BuildContext context) {
     return BackGround(
@@ -26,7 +27,10 @@ class _AddRemoveScreenState extends State<AddRemoveScreen> {
               Navigator.pop(context);
             }),
         body: StreamBuilder(
-            stream: CloudService.paymentCollection.snapshots(),
+            stream: CloudService.paymentCollection
+                .where('approved', isEqualTo: false)
+                .where('type', isEqualTo: TypeOfSubmit.add.name)
+                .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Center(
@@ -42,21 +46,18 @@ class _AddRemoveScreenState extends State<AddRemoveScreen> {
                     in messages!) {
                   PaymentModel paymentModel =
                       PaymentModel.fromSnapshot(message);
-
-                  if (paymentModel.approved == false &&
-                      paymentModel.type == TypeOfSubmit.add.name) {
-                    listReq.add(
-                      CardWidget(
-                        docId: message.id,
-                        slNo: count++,
-                        refNo: paymentModel.refId ?? "",
-                        name: paymentModel.firstName,
-                        email: paymentModel.email,
-                        userId: paymentModel.id,
-                        amount: paymentModel.amount,
-                      ),
-                    );
-                  }
+                  listReq.add(
+                    CardWidget(
+                      docId: message.id,
+                      slNo: count++,
+                      refNo: paymentModel.refId ?? "",
+                      name: paymentModel.firstName,
+                      email: paymentModel.email,
+                      userId: paymentModel.id,
+                      amount: paymentModel.amount,
+                      phNO: paymentModel.number,
+                    ),
+                  );
                 }
                 return ListView.builder(
                   itemCount: listReq.length,

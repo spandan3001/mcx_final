@@ -3,6 +3,7 @@ import 'package:mcx_live/admin/custom_widgets/show_dialog_return.dart';
 import 'package:mcx_live/services/firestore_services.dart';
 import 'package:mcx_live/utils/color_constants.dart';
 import 'package:provider/provider.dart';
+import '../../models/user_model.dart';
 import '../../provider_classes/user_details_provider.dart';
 import '../../utils/google_font.dart';
 import 'card_widget_button.dart';
@@ -11,6 +12,7 @@ class CardWidget extends StatelessWidget {
   const CardWidget(
       {super.key,
       required this.slNo,
+      required this.phNO,
       required this.refNo,
       required this.name,
       required this.email,
@@ -25,6 +27,7 @@ class CardWidget extends StatelessWidget {
   final String docId;
   final String userId;
   final String amount;
+  final String phNO;
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +124,18 @@ class CardWidget extends StatelessWidget {
                           ),
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'UPI ID:',
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff564c4c),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   Column(
@@ -169,6 +184,18 @@ class CardWidget extends StatelessWidget {
                           ),
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          phNO, //this is upi ID oki
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff000000),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -208,9 +235,33 @@ class CardWidget extends StatelessWidget {
         text: "Are you sure?", title: "Confirm");
   }
 
-  void accept(BuildContext context) {
-    CloudService.userCollection.doc(userId).update({"wallet": amount});
+  Future<void> accept(BuildContext context) async {
+    UserModel userModel =
+        Provider.of<UserProvider>(context, listen: false).getUser();
+    double curAmt = double.parse(userModel.wallet);
+    double addAmt = double.parse(amount);
     CloudService.paymentCollection.doc(docId).update({"approved": true});
+
+    if (userModel.depositForRefer) {
+      if (userModel.refererUId != null) {
+        await Provider.of<UserProvider>(context, listen: false)
+            .updateDB({"wallet": (curAmt + addAmt).toString()});
+      }
+    } else {
+      updateReferUser(userModel.refererUId);
+      await Provider.of<UserProvider>(context, listen: false).updateDB(
+          {"wallet": (curAmt + addAmt).toString(), "depositForRefer": true});
+    }
+  }
+
+  Future<void> updateReferUser(String? id) async {
+    if (id != null) {
+      UserModel userModel = UserModel.fromSnapshot(
+          await CloudService.userCollection.doc(id).get());
+      double curAmt = double.parse(userModel.wallet);
+      double addAmt = 200.0 + curAmt;
+      CloudService.userCollection.doc(id).update({"wallet": addAmt.toString()});
+    }
   }
 
   void reject() {

@@ -63,13 +63,12 @@ class DataModel {
     return val.replaceAll('"', '');
   }
 
-  factory DataModel.copyWithChanges(DataModel original, String newToken,
-      List<BestFiveDatum> newBestFiveData) {
+  factory DataModel.copyWithChanges(DataModel original) {
     return DataModel(
       id: original.id,
       subscriptionMode: original.subscriptionMode,
       exchangeType: original.exchangeType,
-      token: newToken, // Change the token
+      token: original.token, // Change the token
       sequenceNumber: original.sequenceNumber,
       exchangeTimestamp: original.exchangeTimestamp,
       lastTradedPrice: original.lastTradedPrice,
@@ -85,7 +84,7 @@ class DataModel {
       lastTradedTimestamp: original.lastTradedTimestamp,
       openInterest: original.openInterest,
       openInterestChange: original.openInterestChange,
-      bestFiveData: newBestFiveData, // Change the list
+      bestFiveData: original.bestFiveData, // Change the list
       v: original.v,
     );
   }

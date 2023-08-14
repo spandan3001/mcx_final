@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MessageModel {
+  final String id;
   final String text;
   final String email;
   final Timestamp timestamp;
@@ -9,6 +10,7 @@ class MessageModel {
   const MessageModel({
     this.imageUrl,
     required this.text,
+    required this.id,
     required this.email,
     required this.timestamp,
   });
@@ -21,6 +23,7 @@ class MessageModel {
       email: data["sender"],
       timestamp: data["timeStamp"] ?? Timestamp(100, 100),
       imageUrl: data['imageUrl'],
+      id: document.id,
     );
   }
   static Map<String, Object> toMap(MessageModel userModel) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mcx_live/models/user_model.dart';
+import 'package:mcx_live/ui_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -19,7 +20,9 @@ class _ReferEarnState extends State<ReferEarn> {
   Widget build(BuildContext context) {
     UserModel userModel =
         Provider.of<UserProvider>(context, listen: false).getUser();
-    return Scaffold(
+    return BackGround(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -58,7 +61,7 @@ class _ReferEarnState extends State<ReferEarn> {
                 ),
                 const SizedBox(height: 25),
                 const Text(
-                  'Earn Rs. 50',
+                  'Earn Rs. 200',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 25,
@@ -183,9 +186,8 @@ class _ReferEarnState extends State<ReferEarn> {
             ),
           ),
         ),
-        bottomNavigationBar: SizedBox(
-            height: MediaQuery.sizeOf(context).height * 0.1,
-            child: Image.asset("images/line_chart.png", fit: BoxFit.fill)));
+      ),
+    );
     ;
   }
 }

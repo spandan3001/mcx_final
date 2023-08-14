@@ -124,7 +124,6 @@ class CommodityCard extends StatelessWidget {
                         children: [
                           Container(
                             color: colorSet.sellColor,
-                            padding: const EdgeInsets.all(2),
                             child: Text(
                               actualSellPoint,
                               style: SafeGoogleFont(
@@ -134,8 +133,8 @@ class CommodityCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const VerticalDivider(
-                            width: 25,
+                          VerticalDivider(
+                            width: fem * 25,
                             thickness: 1,
                             indent: 2,
                             endIndent: 1,

@@ -49,9 +49,6 @@ class _ContactScreenState extends State<ContactScreen> {
     }
   }
 
-  String? getImageUrl() =>
-      Provider.of<AdminProvider>(context, listen: false).getImage();
-
   @override
   Widget build(BuildContext context) {
     return BackGround(
@@ -75,22 +72,16 @@ class _ContactScreenState extends State<ContactScreen> {
               children: [
                 const SizedBox(height: 15),
                 Center(
-                  child: getImageUrl() == null
-                      ? Image.asset(
-                          'images/User.png',
-                          alignment: Alignment.center,
-                          width: 250,
-                          height: 150,
-                        )
-                      : CircleAvatar(
-                          radius: 50,
-                          backgroundImage: NetworkImage(getImageUrl()!),
-                        ),
-                ),
+                    child: Image.asset(
+                  'images/logo_mcx.jpeg',
+                  alignment: Alignment.center,
+                  width: 250,
+                  height: 150,
+                )),
                 const SizedBox(height: 15),
                 const Center(
                   child: Text(
-                    'Admin',
+                    'BUY SELL',
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 25,

@@ -1,17 +1,20 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:mcx_live/provider_classes/platinum_provider.dart';
 import 'package:mcx_live/screens/home_screen/drawer.dart';
+import 'package:mcx_live/screens/home_screen/sort_screen.dart';
 import 'package:mcx_live/services/api/api.dart';
 import 'package:mcx_live/ui_screen.dart';
 import '../../models/data_model.dart';
 import '../../services/api/stream_controller.dart';
+import '../../six_moths_only/trade_symbol.dart';
 import '../../utils/components/circular_progress.dart';
 import '../../utils/google_font.dart';
 import 'package:mcx_live/screens/mcx_screen/widgets/commodity_card.dart';
 import 'package:mcx_live/screens/mcx_screen/widgets/decorations.dart';
 
 class SidePanelScreen extends StatefulWidget {
-  const SidePanelScreen({Key? key}) : super(key: key);
+  const SidePanelScreen({Key? key, required this.isAdmin}) : super(key: key);
+  final bool isAdmin;
 
   @override
   State<SidePanelScreen> createState() => _SidePanelScreenState();
@@ -20,32 +23,31 @@ class SidePanelScreen extends StatefulWidget {
 class _SidePanelScreenState extends State<SidePanelScreen>
     with TickerProviderStateMixin {
   late TabController tabController;
-  List<DataModel> temp = [];
   List<DataModel> listDataModel = [];
+  List<DataModel> sListDataModel = [];
   Map<String, BuySellModel> oldMcxData = {};
   Map<String, ColorModel> colorSet = {};
   String searchString = "";
+
+  List<bool> checkboxValues = [];
   @override
   void initState() {
     super.initState();
     getData();
+    getOrders();
+    updateHistoryOrders();
+    _initializeCheckboxes();
+    PlatinumProvider.getUserFromDB();
     tabController = TabController(length: 2, vsync: this);
-    Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      temp = listDataModel;
-      if (listDataModel.isNotEmpty) {
-        timer.cancel();
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          setState(() {});
-        });
-      }
-    });
   }
 
   @override
   void dispose() {
     super.dispose();
-    MyStreamController.dispose();
     timerForMcx.cancel();
+    timerForOrders.cancel();
+    // McxStreamController.dispose();
+    // OrderStreamController.dispose();
   }
 
   @override
@@ -82,7 +84,7 @@ class _SidePanelScreenState extends State<SidePanelScreen>
           ),
           centerTitle: true,
         ),
-        drawer: drawer(context),
+        drawer: drawer(context, widget.isAdmin),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -119,7 +121,22 @@ class _SidePanelScreenState extends State<SidePanelScreen>
                     ),
                     child: IconButton(
                       tooltip: "Add trade",
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DataModelCheckbox(
+                              allData: listDataModel,
+                              selectedData: sListDataModel,
+                              checkboxValues: checkboxValues,
+                            ),
+                          ),
+                        ).then(
+                          (value) {
+                            checkboxValues = value;
+                          },
+                        );
+                      },
                       icon: const Icon(
                         Icons.add,
                         color: Colors.black,
@@ -131,19 +148,21 @@ class _SidePanelScreenState extends State<SidePanelScreen>
             ),
             Expanded(
               child: StreamBuilder(
-                stream: MyStreamController.stream,
+                stream: McxStreamController.stream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
+                    listDataModel = [];
+                    sListDataModel = [];
                     listDataModel = snapshot.data!;
                     searchModel();
                     giveColors();
                     return ListView.builder(
-                        itemCount: listDataModel.length,
+                        itemCount: sListDataModel.length,
                         itemBuilder: (BuildContext context, int index) {
                           ColorModel? colors =
-                              colorSet[listDataModel[index].token];
+                              colorSet[sListDataModel[index].token];
                           return CommodityCard(
-                            dataModel: listDataModel[index],
+                            dataModel: sListDataModel[index],
                             colorSet: colors ??
                                 ColorModel(
                                     buyColor: Colors.transparent,
@@ -163,11 +182,33 @@ class _SidePanelScreenState extends State<SidePanelScreen>
   }
 
   void searchModel() {
-    listDataModel = listDataModel
-        .where((element) =>
-            DataModel.getStringFromToken(element.token).contains(searchString))
-        .toList();
-    listDataModel.sort((a, b) => a.token.compareTo(b.token));
+    listDataModel.sort(
+      (a, b) => a.token.compareTo(b.token),
+    );
+    sortTradeSymbol();
+    final values = singleCom.values;
+
+    int index = 0;
+    List<DataModel> temp = [];
+    for (index = 0; index < checkboxValues.length; index++) {
+      if (checkboxValues[index]) {
+        temp.add(listDataModel[index]);
+      }
+    }
+    sListDataModel = temp;
+
+    sListDataModel = temp.where((element) {
+      if (DataModel.getStringFromToken(element.token).contains(searchString)) {
+        for (Map<String, dynamic> value in values) {
+          if (element.token.contains(value["token"])) {
+            return true;
+          }
+        }
+        return false;
+      } else {
+        return false;
+      }
+    }).toList();
   }
 
   void giveColors() {
@@ -202,6 +243,14 @@ class _SidePanelScreenState extends State<SidePanelScreen>
     } else {
       return Colors.transparent;
     }
+  }
+
+  void _initializeCheckboxes() {
+    checkboxValues = List.generate(
+      listDataModel.length,
+      (index) => sListDataModel
+          .any((selected) => selected.token == listDataModel[index].token),
+    );
   }
 }
 

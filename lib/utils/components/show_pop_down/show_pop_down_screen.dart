@@ -65,7 +65,7 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                         .map((e) => OrderModel.fromSnapshot(e))
                         .toList();
                     return Container(
-                      height: MediaQuery.sizeOf(context).height * 0.6,
+                      height: MediaQuery.sizeOf(context).height * 0.45,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
@@ -101,22 +101,29 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                               Row(
                                 children: [
                                   IconButton(
-                                      onPressed: () {
+                                    onPressed: () {
+                                      double num = double.parse(_selectedValue);
+                                      if (num > 0.0) {
+                                        final result = checkConditions(
+                                            wallet: userModel.wallet,
+                                            orders: orders);
+
                                         setState(() {
-                                          double num = 0.1 +
-                                              double.parse(_selectedValue);
-                                          _selectedValue =
-                                              num.toString().substring(0, 3);
-                                          // final result =
-                                          //     checkConditionReturnPattern(
-                                          //         wallet: userModel.wallet,
-                                          //         orders: orders);
+                                          _selectedValue = (num - 0.1)
+                                              .toString()
+                                              .substring(0, 3);
                                           _controller = TextEditingController(
                                               text: _selectedValue);
                                         });
-                                      },
-                                      icon: const Icon(Icons.add)),
-                                  SizedBox(
+                                      }
+                                    },
+                                    icon: const Icon(Icons.remove),
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade100,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
                                     width: 50,
                                     child: TextField(
                                       onChanged: (value) {
@@ -124,6 +131,12 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                                           _selectedValue = value;
                                         });
                                       },
+                                      style: SafeGoogleFont(
+                                        'Sofia Pro',
+                                        fontSize: fFem * 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xff1d3a6f),
+                                      ),
                                       keyboardType: TextInputType.number,
                                       textAlign: TextAlign.center,
                                       controller: _controller,
@@ -132,24 +145,17 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                                     ),
                                   ),
                                   IconButton(
-                                    onPressed: () {
-                                      double num = double.parse(_selectedValue);
-                                      if (num >= 0.0) {
+                                      onPressed: () {
                                         setState(() {
-                                          _selectedValue = (num - 0.1)
-                                              .toString()
-                                              .substring(0, 3);
-                                          // final result =
-                                          //     checkConditionReturnPattern(
-                                          //         wallet: userModel.wallet,
-                                          //         orders: orders);
+                                          double num = 0.1 +
+                                              double.parse(_selectedValue);
+                                          _selectedValue =
+                                              num.toString().substring(0, 3);
                                           _controller = TextEditingController(
                                               text: _selectedValue);
                                         });
-                                      }
-                                    },
-                                    icon: const Icon(Icons.remove),
-                                  ),
+                                      },
+                                      icon: const Icon(Icons.add)),
                                 ],
                               ),
                             ],
@@ -164,10 +170,10 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                               color: const Color(0xff1d3a6f),
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 20),
 
                           StreamBuilder(
-                            stream: MyStreamController.stream,
+                            stream: McxStreamController.stream,
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
                                 List<DataModel> dataModels = snapshot.data!
@@ -206,7 +212,7 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 5),
+                                    const SizedBox(height: 20),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
@@ -231,11 +237,13 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(height: 5),
+                                            const SizedBox(height: 25),
                                             ElevatedButton(
                                               style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Colors.green),
+                                                backgroundColor: Colors.green,
+                                                fixedSize:
+                                                    Size(fem * 100, fem * 40),
+                                              ),
                                               onPressed: () {
                                                 onPressed(
                                                     BuyORSell.buy, orders);
@@ -271,10 +279,13 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(height: 5),
+                                            const SizedBox(height: 25),
                                             ElevatedButton(
                                               style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.red),
+                                                backgroundColor: Colors.red,
+                                                fixedSize:
+                                                    Size(fem * 100, fem * 40),
+                                              ),
                                               onPressed: () {
                                                 onPressed(
                                                     BuyORSell.sell, orders);
@@ -284,6 +295,7 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                                                 style: SafeGoogleFont(
                                                   'Sofia Pro',
                                                   fontSize: fFem * 18,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
@@ -332,58 +344,50 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
     }
   }
 
-  (bool, double) checkConditionReturnPattern(
+  static bool checkConditions(
       {required String wallet, required List<OrderModel>? orders}) {
     double walletAmt = double.parse(wallet);
 
-    double totalPercentage = 0.0;
+    double loot = 0.0;
     if (orders != null) {
       for (OrderModel order in orders) {
-        double percentage =
-            double.parse(order.option.substring(0, order.option.length - 1));
-        totalPercentage += percentage;
+        double percentage = double.parse(order.option);
+        loot += percentage;
       }
     }
-    double loot = totalPercentage / 100;
 
-    if (walletAmt < 10000) {
-      if (loot < McxService.lootLimitList[10000]!) {
-        _maxValue = McxService.lootLimitList[10000]! * 100;
-        return (true, totalPercentage);
+    if (walletAmt < 1000) {
+      if (loot < 0.7) {
+        return true;
       } else {
-        return (false, totalPercentage);
+        return false;
       }
     } else if (walletAmt < 20000) {
-      if (loot < McxService.lootLimitList[20000]!) {
-        _maxValue = McxService.lootLimitList[20000]! * 100;
-        return (true, totalPercentage);
+      if (loot < 1.25) {
+        return true;
       } else {
-        return (false, totalPercentage);
+        return false;
       }
     } else if (walletAmt < 40000) {
-      if (loot < McxService.lootLimitList[40000]!) {
-        _maxValue = McxService.lootLimitList[40000]! * 100;
-        return (true, totalPercentage);
+      if (loot < 1.5) {
+        return true;
       } else {
-        return (false, totalPercentage);
+        return false;
       }
     } else if (walletAmt < 70000) {
-      if (loot < McxService.lootLimitList[70000]!) {
-        _maxValue = McxService.lootLimitList[70000]! * 100;
-        return (true, totalPercentage);
+      if (loot < 2) {
+        return true;
       } else {
-        return (false, totalPercentage);
+        return false;
       }
     } else if (walletAmt < 100000) {
-      if (loot < McxService.lootLimitList[100000]!) {
-        _maxValue = McxService.lootLimitList[100000]! * 100;
-        return (true, totalPercentage);
+      if (loot < 2.5) {
+        return true;
       } else {
-        return (false, totalPercentage);
+        return false;
       }
     } else {
-      _maxValue = 1000;
-      return (true, totalPercentage);
+      return true;
     }
   }
 }

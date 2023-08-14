@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mcx_live/models/data_model.dart';
+import 'package:mcx_live/models/post_model.dart';
 import 'package:mcx_live/services/firestore_services.dart';
 import 'package:mcx_live/six_moths_only/trade_symbol.dart';
 
 import '../models/order_model.dart';
+import 'api/api.dart';
 
 class McxService {
   static Future<bool> placeOrder(
@@ -17,7 +19,7 @@ class McxService {
       required String type,
       required String token}) async {
     if (checkConditions(wallet: wallet, orders: orders)) {
-      await CloudService.orderCollection.add({
+      final orderDoc = await CloudService.orderCollection.add({
         "userId": userId,
         "email": userEmail,
         "placedPoint": placedPoint,
@@ -29,14 +31,21 @@ class McxService {
         "isActive": true,
         "type": type
       });
-      // await CloudService.userCollection.doc(userId).update({
-      //   'wallet': getDifference(
-      //       placedPoint: placedPoint,
-      //       option: option,
-      //       token: token,
-      //       wallet: wallet)
-      // });
-      return true;
+      OrderModel orderModel = OrderModel.fromSnapshot(await orderDoc.get());
+      PostModel postModel = PostModel(
+          point: placedPoint,
+          userId: userId,
+          orderId: orderModel.id,
+          status: "open",
+          type: type,
+          token: token);
+
+      final resp = await doPost(PostModel.toJson(postModel));
+      if (resp.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
@@ -89,23 +98,23 @@ class McxService {
     }
   }
 
-  static String getDifference(
-      {required String option,
-      required String placedPoint,
-      required String token,
-      required String wallet}) {
-    String commodity = DataModel.getStringFromToken(token);
-    return (double.parse(wallet) -
-            (double.parse(option) *
-                (double.parse(placedPoint) * price[commodity]!)))
-        .toString();
-  }
+  // static String getDifference(
+  //     {required String option,
+  //     required String placedPoint,
+  //     required String token,
+  //     required String wallet}) {
+  //   String commodity = DataModel.getStringFromToken(token);
+  //   return (double.parse(wallet) -
+  //           (double.parse(option) *
+  //               (double.parse(placedPoint) * price[commodity]!)))
+  //       .toString();
+  // }
 
-  static Map<double, double> lootLimitList = {
-    10000: 1,
-    20000: 1.25,
-    40000: 1.5,
-    70000: 2,
-    100000: 2.5
-  };
+  // static Map<double, double> lootLimitList = {
+  //   10000: 1,
+  //   20000: 1.25,
+  //   40000: 1.5,
+  //   70000: 2,
+  //   100000: 2.5
+  // };
 }

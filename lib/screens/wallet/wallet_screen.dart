@@ -34,7 +34,7 @@ class _WalletScreenState extends State<WalletScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: appBar(
-          title: "WALLET",
+          title: widget.type == TypeOfSubmit.add ? "DEPOSIT" : "WITHDRAW",
           onTap: () {
             Navigator.pop(context);
           },
@@ -83,10 +83,6 @@ class _WalletScreenState extends State<WalletScreen> {
                                       fontWeight: FontWeight.bold,
                                       color: kGradient1),
                                   children: [
-                                    TextSpan(
-                                      text: '₹',
-                                      style: SafeGoogleFont('ITF Rupee'),
-                                    ),
                                     TextSpan(
                                       text: userModel.wallet,
                                       style: SafeGoogleFont('Sofia Pro'),
@@ -164,7 +160,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 setState(() {
                                   selected = Amount.a1500;
                                   editingController = TextEditingController(
-                                      text: selected.name.substring(1));
+                                      text: "${selected.name.substring(1)}");
                                 });
                               },
                               value: Amount.a1500,
@@ -176,7 +172,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 setState(() {
                                   selected = Amount.a3000;
                                   editingController = TextEditingController(
-                                      text: selected.name.substring(1));
+                                      text: "${selected.name.substring(1)}");
                                 });
                               },
                               value: Amount.a3000,
@@ -188,7 +184,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 setState(() {
                                   selected = Amount.a6000;
                                   editingController = TextEditingController(
-                                      text: selected.name.substring(1));
+                                      text: "${selected.name.substring(1)}");
                                 });
                               },
                               value: Amount.a6000,
@@ -213,7 +209,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                   title: "Done 🎉");
                             } else {
                               showAlertDialog(context,
-                                  text: "Sorry something went wrong",
+                                  text: "Insufficient balance",
                                   title: "Sorry😕");
                             }
                           },
@@ -241,7 +237,6 @@ class _WalletScreenState extends State<WalletScreen> {
                             ),
                           ),
                         ),
-                        const ShowPopDownButton(),
                       ],
                     ),
                   ),

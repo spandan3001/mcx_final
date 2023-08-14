@@ -1,3 +1,5 @@
+import '../models/data_model.dart';
+
 final tradeSymbol = {
   "000000": {"symbol": "PLATINUM23AUGFUT", "expiry": "31AUG2023"},
   "247117": {"symbol": "SILVERM23AUGFUT", "expiry": "31AUG2023"},
@@ -46,15 +48,63 @@ final tradeSymbol = {
   "259273": {"symbol": "GOLDM23NOVFUT", "expiry": "03NOV2023"}
 };
 
+DateTime convertStringToDate(String str) {
+  String year = str.substring(5);
+  String month = str.substring(2, 5);
+  String day = str.substring(0, 2);
+
+  return DateTime(int.parse(year), months[month]!, int.parse(day));
+}
+
+Map<String, dynamic> selectedCom = {};
+Map<String, dynamic> singleCom = {};
+
+void sortTradeSymbol() {
+  tradeSymbol.forEach((key, value) {
+    DateTime expiry = convertStringToDate(value['expiry']!);
+    DateTime? time = singleCom[DataModel.getStringFromToken(key)]?['expiry'];
+    if (time != null) {
+      if (time.isAfter(expiry)) {
+        singleCom[DataModel.getStringFromToken(key)] = {
+          'expiry': expiry,
+          'token': key
+        };
+      }
+    } else {
+      singleCom[DataModel.getStringFromToken(key)] = {
+        'expiry': expiry,
+        'token': key
+      };
+    }
+  });
+}
+
+final months = {
+  "JAN": 1,
+  "FEB": 2,
+  "MAR": 3,
+  "APR": 4,
+  "MAY": 5,
+  "JUN": 6,
+  "JUL": 7,
+  "AUG": 8,
+  "SEP": 9,
+  "OCT": 10,
+  "NOV": 11,
+  "DEC": 12,
+};
+
 final price = {
-  "GOLD": 100,
-  "SILVER": 30,
-  "CRUDEOIL": 100,
-  "COPPER": 2500,
-  "NATURALGAS": 1250,
-  "ZINC": 5000,
-  "ALUMINIUM": 5000,
-  "LEAD": 5000,
-  "SILVERM": 30,
-  "PLATINUM": 100
+  "GOLD": 100.0,
+  "SILVER": 30.0,
+  "CRUDEOIL": 100.0,
+  "COPPER": 2500.0,
+  "NATURALGAS": 1250.0,
+  "ZINC": 5000.0,
+  "ALUMINIUM": 5000.0,
+  "LEAD": 5000.0,
+  "SILVERM": 5.0,
+  "PLATINUM": 250.0,
+  "SILVERMIC": 1.0,
+  "GOLDM": 10.0
 };

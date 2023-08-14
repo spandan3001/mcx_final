@@ -30,15 +30,20 @@ class _InputMessageState extends State<InputMessage> {
       child: Row(
         children: [
           Expanded(
-            child: TextField(
-              controller: widget.controller,
-              style: const TextStyle(fontSize: 18, color: Colors.black),
-              maxLines: null,
-              decoration: kTextInputDecoration(
-                suffixIcon: IconButton(
-                  onPressed: widget.onPressedForImage,
-                  icon: const Icon(Icons.attach_file_sharp),
-                  color: Colors.black,
+            child: SizedBox(
+              height: 45,
+              width: double.infinity,
+              child: TextField(
+                controller: widget.controller,
+                style: const TextStyle(fontSize: 18, color: Colors.black),
+                maxLines: null,
+                decoration: kTextInputDecoration(
+                  suffixIcon: IconButton(
+                    onPressed: widget.onPressedForImage,
+                    icon: Transform.rotate(
+                        angle: 10, child: const Icon(Icons.attach_file_sharp)),
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),

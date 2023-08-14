@@ -25,6 +25,7 @@ class _ProfileState extends State<Profile> {
   late final TextEditingController numberController;
   late final TextEditingController genderController;
   late final TextEditingController secondNameController;
+  late final TextEditingController upiController;
 
   File? selectedImage;
   final double clipRadius = 70;
@@ -33,6 +34,7 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     firstNameController = TextEditingController();
+    upiController = TextEditingController();
     secondNameController = TextEditingController();
     numberController = TextEditingController();
     genderController = TextEditingController();
@@ -41,7 +43,6 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return BackGround(
       child: GestureDetector(
         onTap: () {
@@ -251,6 +252,32 @@ class _ProfileState extends State<Profile> {
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
+                        'UPI ID',
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: SizedBox(
+                        width: 330,
+                        child: TextFormField(
+                          controller: upiController,
+                          decoration: InputDecoration(
+                            hintText: userModel.upiId ?? "upi Id",
+                            hintStyle: const TextStyle(
+                                color: Colors.black, fontSize: 19),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
                         'Gender',
                         style: TextStyle(
                           color: Colors.black54,
@@ -303,7 +330,12 @@ class _ProfileState extends State<Profile> {
                                       email: userModel.email,
                                       wallet: userModel.wallet,
                                       referCode: userModel.referCode,
-                                      refererUId: userModel.refererUId),
+                                      refererUId: userModel.refererUId,
+                                      depositForRefer:
+                                          userModel.depositForRefer,
+                                      upiId: upiController.text.isNotEmpty
+                                          ? upiController.text
+                                          : userModel.upiId),
                                 );
                                 FocusScopeNode currentFocus =
                                     FocusScope.of(context);

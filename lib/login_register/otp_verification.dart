@@ -129,6 +129,7 @@ class _FormValidationForOTPState extends State<FormValidationForOTP> {
           referCode: CodeGenerator.generateCode(),
           id: '',
           imageUrl: "",
+          depositForRefer: false,
         ),
       );
       await db.collection("users").doc(userId).set(data);

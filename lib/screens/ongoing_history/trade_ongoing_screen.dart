@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mcx_live/models/server_order_model.dart';
 import 'package:mcx_live/provider_classes/user_details_provider.dart';
 import 'package:mcx_live/services/api/stream_controller.dart';
 import 'package:mcx_live/services/firestore_services.dart';
@@ -7,8 +8,9 @@ import 'package:mcx_live/utils/components/circular_progress.dart';
 import 'package:provider/provider.dart';
 import '../../models/data_model.dart';
 import '../../models/order_model.dart';
+import '../../models/post_model.dart';
 import '../../models/user_model.dart';
-import '../../utils/components/custom_radio_button.dart';
+import '../../services/api/api.dart';
 import '../../utils/components/show_dialog.dart';
 import '../../utils/google_font.dart';
 
@@ -19,10 +21,12 @@ class TradeOngoing extends StatefulWidget {
   State<TradeOngoing> createState() => _TradeOngoingState();
 }
 
-class _TradeOngoingState extends State<TradeOngoing> {
-  DataModel? oldData;
+class _TradeOngoingState extends State<TradeOngoing>
+    with AutomaticKeepAliveClientMixin<TradeOngoing> {
+  String amount = "";
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return StreamBuilder(
       stream: CloudService.orderCollection
           .where("isActive", isEqualTo: true)
@@ -32,43 +36,27 @@ class _TradeOngoingState extends State<TradeOngoing> {
           List<OrderModel> orderModelList = snapshot.data!.docs
               .map((e) => OrderModel.fromSnapshot(e))
               .toList();
-          return Column(
-            children: [
-              StreamBuilder(
-                  stream: MyStreamController.stream,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      String buyPrice = "";
-                      String sellPrice = "";
-                      String priceOfType = "";
-                      double amount = 0.0;
-                      for (OrderModel order in orderModelList) {
-                        order.placedPoint;
-                        List<DataModel> dataModels = snapshot.data!
-                            .where((element) =>
-                                element.token.contains(order.token))
-                            .toList();
-                        if (dataModels.isNotEmpty) {
-                          DataModel dataModel = dataModels[0];
-
-                          buyPrice = dataModel.bestFiveData[5].buySellPrice;
-                          sellPrice = dataModel.bestFiveData[0].buySellPrice;
-                          if (order.type == BuyORSell.buy.name) {
-                            priceOfType = buyPrice;
-                          } else {
-                            priceOfType = sellPrice;
-                          }
-                          amount += difference(
-                              priceOfType, order.placedPoint, order.token);
-                        }
-                      }
-                      return Container(
+          return StreamBuilder(
+              stream: OrderStreamController.stream,
+              builder: (context, serOrderSnaps) {
+                if (serOrderSnaps.hasData) {
+                  UserModel userModel =
+                      Provider.of<UserProvider>(context, listen: false)
+                          .getUser();
+                  List<ServerOrderModel> svrOrderModels = serOrderSnaps.data!;
+                  amount =
+                      getTotalAmt(svrOrderModels, orderModelList, userModel.id)
+                          .roundToDouble()
+                          .toString();
+                  return Column(
+                    children: [
+                      Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                             color: Colors.grey.shade100,
                             borderRadius: BorderRadius.circular(20)),
                         child: Text(
-                          "Wallet :$amount ",
+                          "Wallet :${double.parse(userModel.wallet) - double.parse(amount)} ",
                           style: SafeGoogleFont(
                             'Sofia Pro',
                             fontSize: 18,
@@ -76,35 +64,31 @@ class _TradeOngoingState extends State<TradeOngoing> {
                             color: const Color(0xff1d3a6f),
                           ),
                         ),
-                      );
-                    } else {
-                      return Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Text(
-                          "Wallet :-",
-                          style: SafeGoogleFont(
-                            'Sofia Pro',
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xff1d3a6f),
-                          ),
-                        ),
-                      );
-                    }
-                  }),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: orderModelList.length,
-                  itemBuilder: (context, index) => TradeOngoingCard(
-                    orderModel: orderModelList[index],
-                  ),
-                ),
-              ),
-            ],
-          );
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                            itemCount: orderModelList.length,
+                            itemBuilder: (context, index) {
+                              List<ServerOrderModel> singleSer = [];
+                              for (ServerOrderModel ele in svrOrderModels) {
+                                if (ele.orderId
+                                    .contains(orderModelList[index].id)) {
+                                  singleSer.add(ele);
+                                }
+                              }
+                              return TradeOngoingCard(
+                                orderModel: orderModelList[index],
+                                serverOrderModels: singleSer[0],
+                                userModel: userModel,
+                              );
+                            }),
+                      ),
+                    ],
+                  );
+                } else {
+                  return const Loading();
+                }
+              });
         } else {
           return const Loading();
         }
@@ -112,224 +96,189 @@ class _TradeOngoingState extends State<TradeOngoing> {
     );
   }
 
-  double difference(String actual, String ordered, String token) {
+  double difference(String point, String token, String option) {
     String commodity = DataModel.getStringFromToken(token);
 
-    double x = double.parse(actual);
-    double y = double.parse(ordered);
-    return ((x - y) * price[commodity]!).roundToDouble();
+    double cur = double.parse(point);
+
+    double quan = double.parse(option);
+    return (cur * quan * price[commodity]!);
   }
+
+  double getTotalAmt(List<ServerOrderModel> serOrders, List<OrderModel> orders,
+      String userId) {
+    double amount = 0.0;
+    for (ServerOrderModel serOrder in serOrders) {
+      print(serOrder.diffPoint);
+      for (OrderModel order in orders) {
+        if (serOrder.orderId == order.id && order.userId == userId) {
+          amount += difference(serOrder.diffPoint, order.token, order.option);
+          break;
+        }
+      }
+    }
+    return amount;
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
-class TradeOngoingCard extends StatefulWidget {
+class TradeOngoingCard extends StatelessWidget {
   const TradeOngoingCard({
     super.key,
     required this.orderModel,
+    required this.serverOrderModels,
+    required this.userModel,
   });
   final OrderModel orderModel;
+  final ServerOrderModel serverOrderModels;
+  final UserModel userModel;
 
-  @override
-  State<TradeOngoingCard> createState() => _TradeOngoingCardState();
-}
+  // late String buyPoint;
+  //
+  // late String sellPoint;
+  //
+  // late String pointOfType;
 
-class _TradeOngoingCardState extends State<TradeOngoingCard> {
-  DataModel? oldData;
-
-  late String buyPoint;
-  late String sellPoint;
-  late String pointOfType;
   @override
   Widget build(BuildContext context) {
     double baseWidth = 360;
     double fem = MediaQuery.sizeOf(context).width / baseWidth;
     double fFem = fem * 0.97;
+    String commodity = DataModel.getStringFromToken(orderModel.token);
+    String ongoingAmount =
+        "${(price[commodity]! * double.parse(orderModel.option) * double.parse(serverOrderModels.diffPoint)).roundToDouble()}";
     return GestureDetector(
       onTap: () async {
         final result = await showAlertDialog(context,
             title: "Confirm", text: "want to close?", optionNo: true);
         if (result != null) {
           if (result) {
-            String amount = getDifferenceInPrice(
-                widget.orderModel.placedPoint,
-                pointOfType,
-                DataModel.getStringFromToken(widget.orderModel.token));
-            double amountInDouble = double.parse(amount).roundToDouble();
+            double amountInDouble = double.parse(ongoingAmount);
             String userAmount;
-            String adminAmount;
             if (amountInDouble > 0) {
               userAmount = (amountInDouble * 0.8).toString();
             } else {
-              userAmount = amount;
+              userAmount = ongoingAmount;
             }
-            CloudService.orderCollection.doc(widget.orderModel.id).update(
-              {
-                "amount": userAmount,
-                "closedPoint": pointOfType,
-                "isActive": false,
-              },
-            );
-            UserModel userModel =
-                Provider.of<UserProvider>(context, listen: false).getUser();
+            PostModel postModel = PostModel(
+                point: orderModel.placedPoint,
+                userId: userModel.id,
+                orderId: orderModel.id,
+                status: "closed",
+                type: orderModel.type,
+                token: orderModel.token);
+
+            final resp = await doPost(PostModel.toJson(postModel));
+            if (resp.statusCode == 200) {
+              double closedPoint = double.parse(orderModel.placedPoint) +
+                  double.parse(serverOrderModels.diffPoint);
+              CloudService.orderCollection.doc(orderModel.id).update(
+                {
+                  "amount": userAmount,
+                  "closedPoint": closedPoint.toString(),
+                  "isActive": false,
+                },
+              );
+            }
+
             Provider.of<UserProvider>(context, listen: false).updateDB({
               "wallet":
-                  double.parse(userModel.wallet) - double.parse(userAmount)
+                  (double.parse(userModel.wallet) - double.parse(userAmount))
+                      .toString()
             });
           }
         }
       },
-      child: StreamBuilder(
-        stream: MyStreamController.stream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<DataModel> dataModels = snapshot.data!
-                .where((element) =>
-                    element.token.contains(widget.orderModel.token))
-                .toList();
-            DataModel dataModel;
-            if (dataModels.isNotEmpty) {
-              dataModel = dataModels[0];
-            } else {
-              dataModel = (oldData != null) ? oldData! : dataModels.first;
-            }
-            oldData = dataModel;
-            buyPoint = dataModel.bestFiveData[5].buySellPrice;
-            sellPoint = dataModel.bestFiveData[0].buySellPrice;
-            if (widget.orderModel.type == BuyORSell.buy.name) {
-              pointOfType = buyPoint;
-            } else {
-              pointOfType = sellPoint;
-            }
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Card(
-                elevation: 2,
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
-                      BoxShadow(
-                          color: getTextColor(pointOfType),
-                          offset: const Offset(-7, 0),
-                          blurRadius: 4,
-                          spreadRadius: -6)
-                    ],
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                DataModel.getStringFromToken(
-                                    widget.orderModel.token),
-                                style: SafeGoogleFont(
-                                  'Sofia Pro',
-                                  fontSize: fFem * 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xff1d3a6f),
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                DataModel.getExpiryFromToken(
-                                    widget.orderModel.token),
-                                style: SafeGoogleFont(
-                                  'Sofia Pro',
-                                  fontSize: fFem * 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xff1d3a6f),
-                                ),
-                              ),
-                            ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Card(
+          elevation: 2,
+          child: Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5),
+              boxShadow: [
+                BoxShadow(
+                    color: getTextColor(),
+                    offset: const Offset(-7, 0),
+                    blurRadius: 4,
+                    spreadRadius: -6)
+              ],
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          commodity,
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: fFem * 18,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xff1d3a6f),
                           ),
-                          Text(
-                            " ${widget.orderModel.option} Qty (${widget.orderModel.type.toUpperCase().substring(0, 1)})",
-                            style: SafeGoogleFont(
-                              'Sofia Pro',
-                              fontSize: fFem * 14,
-                              color: const Color(0xff1d3a6f),
-                            ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          DataModel.getExpiryFromToken(orderModel.token),
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: fFem * 18,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xff1d3a6f),
                           ),
-                        ],
+                        ),
+                      ],
+                    ),
+                    Text(
+                      " ${orderModel.option} Qty (${orderModel.type.toUpperCase()})",
+                      style: SafeGoogleFont(
+                        'Sofia Pro',
+                        fontSize: fFem * 14,
+                        color: const Color(0xff1d3a6f),
                       ),
-                      Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                "₹${getDifferenceInPrice(widget.orderModel.placedPoint, pointOfType, DataModel.getStringFromToken(widget.orderModel.token))}",
-                                style: SafeGoogleFont(
-                                  'Sofia Pro',
-                                  fontSize: fFem * 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: getTextColor(pointOfType),
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "LTP:${dataModel.lastTradedPrice}",
-                                    style: SafeGoogleFont(
-                                      'Sofia Pro',
-                                      fontSize: fFem * 14,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    "(-0.26%)",
-                                    style: SafeGoogleFont(
-                                      'Sofia Pro',
-                                      fontSize: fFem * 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ),
-            );
-          } else {
-            return const Loading();
-          }
-        },
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          "${price[commodity]! * double.parse(serverOrderModels.diffPoint)}",
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: fFem * 18,
+                            fontWeight: FontWeight.bold,
+                            color: getTextColor(),
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Color getTextColor(String actualPrice) {
-    double placed = double.parse(widget.orderModel.placedPoint);
-    double actual = double.parse(actualPrice);
+  Color getTextColor() {
+    double actual = double.parse(serverOrderModels.diffPoint);
 
-    return placed <= actual ? Colors.green : Colors.red;
-  }
-
-  String getDifference(String actualPoints) {
-    double placed = double.parse(widget.orderModel.placedPoint);
-    double actual = double.parse(actualPoints);
-
-    return (actual - placed).toString();
-  }
-
-  String getDifferenceInPrice(
-      String placedPoints, String actualPoints, String commodity) {
-    double placed = double.parse(placedPoints);
-    double actual = double.parse(actualPoints);
-
-    return (((actual - placed) * price[commodity]!) *
-            double.parse(widget.orderModel.option))
-        .roundToDouble()
-        .toString();
+    return actual >= 0 ? Colors.green : Colors.red;
   }
 }

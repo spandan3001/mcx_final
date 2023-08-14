@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mcx_live/models/user_model.dart';
+import 'package:mcx_live/services/firestore_services.dart';
 
 class UserProvider extends ChangeNotifier {
   late UserModel _userModel;
@@ -9,20 +9,24 @@ class UserProvider extends ChangeNotifier {
     return _userModel;
   }
 
-  void getUserFromDB() {}
-
-  void setUserToDB(UserModel userModel) {
-    FirebaseFirestore.instance.collection("users").doc(_userModel.id).update(
-          UserModel.toMap(userModel),
-        );
+  Future<void> getUserFromDB() async {
+    await CloudService.userCollection.doc(_userModel.id).get().then((value) {
+      _userModel = UserModel.fromSnapshot(value);
+    });
     _notifyAll();
   }
 
-  void updateDB(Map<String, dynamic> data) {
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(_userModel.id)
-        .update(data);
+  Future<void> setUserToDB(UserModel userModel) async {
+    await CloudService.userCollection.doc(_userModel.id).update(
+          UserModel.toMap(userModel),
+        );
+    await getUserFromDB();
+    _notifyAll();
+  }
+
+  Future<void> updateDB(Map<String, dynamic> data) async {
+    await CloudService.userCollection.doc(_userModel.id).update(data);
+    await getUserFromDB();
     _notifyAll();
   }
 

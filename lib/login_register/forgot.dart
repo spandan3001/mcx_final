@@ -90,10 +90,6 @@ class _ForgotState extends State<Forgot> {
                         .sendPasswordResetEmail(
                             email: usernameController.text.toString())
                         .then((value) {
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => const ChatScreen()));
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         backgroundColor: Colors.green,
                         content: Text(
@@ -106,7 +102,7 @@ class _ForgotState extends State<Forgot> {
                       ));
                     });
                   },
-                  text: "SEND OTP",
+                  text: "SEND EMAIL",
                 ),
               ],
             ),

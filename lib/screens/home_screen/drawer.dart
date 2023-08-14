@@ -15,7 +15,7 @@ import '../refer_and_earn/faq.dart';
 import '../refer_and_earn/refer_and_earn.dart';
 import '../wallet/wallet_screen.dart';
 
-Drawer drawer(BuildContext context) {
+Drawer drawer(BuildContext context, bool isAdmin) {
   return Drawer(
     child: Consumer<UserProvider>(builder: (context, userProvider, child) {
       UserModel userModel = userProvider.getUser();
@@ -73,28 +73,47 @@ Drawer drawer(BuildContext context) {
               Navigator.pop(context);
             },
           ),
-          ListTile(
-            leading: Image.asset(
-              'images/User.png',
-              height: 35,
-              width: 35,
-              color: Colors.blue,
-            ),
-            title: Text(
-              'Admin',
-              style: GoogleFonts.lato(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+          if (isAdmin)
+            ListTile(
+              leading: const Icon(
+                Icons.home,
+                size: 35,
+                color: Colors.blue,
               ),
+              title: Text(
+                'Admin',
+                style: GoogleFonts.lato(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AdminHomeScreen()));
+              },
             ),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AdminHomeScreen()));
-            },
-          ),
+          if (!isAdmin)
+            ListTile(
+              leading: const Icon(
+                Icons.home,
+                size: 35,
+                color: Colors.blue,
+              ),
+              title: Text(
+                'Home',
+                style: GoogleFonts.lato(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
           ListTile(
             leading: Image.asset(
               'images/trading.png',
@@ -103,7 +122,7 @@ Drawer drawer(BuildContext context) {
               color: Colors.blue,
             ),
             title: Text(
-              'Trade',
+              'My Trade',
               style: GoogleFonts.lato(
                 color: Colors.black,
                 fontSize: 16,

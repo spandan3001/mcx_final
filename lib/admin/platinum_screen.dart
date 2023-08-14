@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mcx_live/provider_classes/platinum_provider.dart';
 import 'package:mcx_live/utils/components/app_bar.dart';
 import 'package:mcx_live/utils/components/circular_progress.dart';
 import 'package:mcx_live/utils/components/show_dialog.dart';
@@ -17,8 +18,8 @@ class PlatinumScreen extends StatefulWidget {
 
 class _PlatinumScreenState extends State<PlatinumScreen> {
   late final TextEditingController tokenController;
-  late final TextEditingController buyController;
-  late final TextEditingController sellController;
+  late final TextEditingController pointController;
+  final _formatter = PositiveNegativeNumberFormatter();
 
   File? selectedImage;
 
@@ -36,8 +37,7 @@ class _PlatinumScreenState extends State<PlatinumScreen> {
   void initState() {
     super.initState();
     tokenController = TextEditingController();
-    buyController = TextEditingController();
-    sellController = TextEditingController();
+    pointController = TextEditingController();
   }
 
   @override
@@ -84,11 +84,9 @@ class _PlatinumScreenState extends State<PlatinumScreen> {
                           child: TextFormField(
                             controller: tokenController,
                             keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            inputFormatters: <TextInputFormatter>[_formatter],
                             decoration: InputDecoration(
-                              hintText: data?['token'] ?? "xxx",
+                              hintText: data?['token'] ?? "error",
                               hintStyle: const TextStyle(
                                   color: Colors.black, fontSize: 19),
                             ),
@@ -98,7 +96,7 @@ class _PlatinumScreenState extends State<PlatinumScreen> {
                         const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Text(
-                            'Buy Points',
+                            'Points',
                             style: TextStyle(
                                 color: Colors.black54,
                                 fontSize: 18,
@@ -109,43 +107,12 @@ class _PlatinumScreenState extends State<PlatinumScreen> {
                           width: MediaQuery.sizeOf(context).width,
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
-                            controller: buyController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            controller: pointController,
+                            keyboardType: TextInputType.text,
                             decoration: InputDecoration(
-                              hintText: data?['buyPoint'] ?? "xxx",
+                              hintText: data?['point'] ?? "error",
                               hintStyle: const TextStyle(
                                   color: Colors.black, fontSize: 19),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            'sell Points',
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: SizedBox(
-                            child: TextFormField(
-                              controller: sellController,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              decoration: InputDecoration(
-                                hintText: data?['sellPoint'] ?? "xxx",
-                                hintStyle: const TextStyle(
-                                    color: Colors.black, fontSize: 19),
-                              ),
                             ),
                           ),
                         ),
@@ -167,23 +134,17 @@ class _PlatinumScreenState extends State<PlatinumScreen> {
                                         "token": tokenController.text.isNotEmpty
                                             ? tokenController.text
                                             : data?['token'],
-                                        "buyPoint":
-                                            buyController.text.isNotEmpty
-                                                ? buyController.text
-                                                : data?['buyPoint'],
-                                        "sellPoint":
-                                            sellController.text.isNotEmpty
-                                                ? sellController.text
-                                                : data?['sellPoint']
+                                        "point": pointController.text.isNotEmpty
+                                            ? pointController.text
+                                            : data?['point'],
                                       },
                                     );
                                   },
                                 ).then(
                                   (value) {
+                                    PlatinumProvider.getUserFromDB();
                                     tokenController.clear();
-                                    sellController.clear();
-                                    buyController.clear();
-                                    return value;
+                                    pointController.clear();
                                   },
                                 );
                               },
@@ -214,5 +175,19 @@ class _PlatinumScreenState extends State<PlatinumScreen> {
         ),
       ),
     );
+  }
+}
+
+class PositiveNegativeNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final pattern = RegExp(r'^[-+]?[0-9]*$');
+    if (pattern.hasMatch(newValue.text)) {
+      return newValue;
+    } else {
+      print(oldValue);
+      return oldValue;
+    }
   }
 }

@@ -23,7 +23,6 @@ class MessageStream extends StatelessWidget {
 
       final userMail =
           Provider.of<UserProvider>(context, listen: false).getEmail();
-
       messagesList.add(
         MessageBubble(
           text: textMessage.trim(),

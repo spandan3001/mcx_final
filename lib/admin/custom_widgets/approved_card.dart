@@ -6,6 +6,7 @@ class ApprovedCardWidget extends StatelessWidget {
   const ApprovedCardWidget(
       {super.key,
       required this.slNo,
+      required this.phNo,
       required this.refNo,
       required this.name,
       required this.email,
@@ -20,6 +21,7 @@ class ApprovedCardWidget extends StatelessWidget {
   final String docId;
   final String userId;
   final String amount;
+  final String phNo;
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +118,18 @@ class ApprovedCardWidget extends StatelessWidget {
                           ),
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'PhNo:',
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff564c4c),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   Column(
@@ -149,6 +163,18 @@ class ApprovedCardWidget extends StatelessWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           amount,
+                          style: SafeGoogleFont(
+                            'Sofia Pro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff000000),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          phNo,
                           style: SafeGoogleFont(
                             'Sofia Pro',
                             fontSize: 18,

@@ -1,7 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mcx_live/models/admin_model.dart';
-import 'package:mcx_live/models/user_model.dart';
+import 'package:mcx_live/services/firestore_services.dart';
 
 class AdminProvider extends ChangeNotifier {
   late AdminModel _adminModel;
@@ -10,20 +9,24 @@ class AdminProvider extends ChangeNotifier {
     return _adminModel;
   }
 
-  void getUserFromDB() {}
-
-  void setUserToDB(AdminModel adminModel) {
-    FirebaseFirestore.instance.collection("admin").doc(_adminModel.id).update(
-          adminModel.toMap(adminModel),
-        );
+  Future<void> getUserFromDB() async {
+    await CloudService.adminCollection.doc(_adminModel.id).get().then((value) {
+      _adminModel = AdminModel.fromSnapshot(value);
+    });
     _notifyAll();
   }
 
-  void updateDB(Map<String, dynamic> data) {
-    FirebaseFirestore.instance
-        .collection("admin")
-        .doc(_adminModel.id)
-        .update(data);
+  Future<void> setUserToDB(AdminModel adminModel) async {
+    await CloudService.adminCollection.doc(_adminModel.id).update(
+          adminModel.toMap(adminModel),
+        );
+    await getUserFromDB();
+    _notifyAll();
+  }
+
+  Future<void> updateDB(Map<String, dynamic> data) async {
+    await CloudService.adminCollection.doc(_adminModel.id).update(data);
+    await getUserFromDB();
     _notifyAll();
   }
 
@@ -34,10 +37,6 @@ class AdminProvider extends ChangeNotifier {
 
   String getEmail() {
     return _adminModel.email;
-  }
-
-  String? getImage() {
-    return _adminModel.imageUrl;
   }
 
   String getAdminDocId() {

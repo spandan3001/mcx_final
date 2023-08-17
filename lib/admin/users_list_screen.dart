@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mcx_live/services/firestore_services.dart';
 import 'package:mcx_live/utils/components/app_bar.dart';
@@ -26,7 +27,7 @@ class _UsersListScreenState extends State<UsersListScreen> {
           Navigator.pop(context);
         },
       ),
-      body: StreamBuilder(
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: CloudService.userCollection.snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {

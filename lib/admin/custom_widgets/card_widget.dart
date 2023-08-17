@@ -236,32 +236,35 @@ class CardWidget extends StatelessWidget {
   }
 
   Future<void> accept(BuildContext context) async {
-    UserModel userModel =
-        Provider.of<UserProvider>(context, listen: false).getUser();
+    UserModel userModel = UserModel.fromSnapshot(
+        await CloudService.userCollection.doc(userId).get());
     double curAmt = double.parse(userModel.wallet);
     double addAmt = double.parse(amount);
     CloudService.paymentCollection.doc(docId).update({"approved": true});
 
-    if (userModel.depositForRefer) {
-      if (userModel.refererUId != null) {
-        await Provider.of<UserProvider>(context, listen: false)
-            .updateDB({"wallet": (curAmt + addAmt).toString()});
+    if (userModel.refererUId != null) {
+      if (userModel.depositForRefer) {
+        await CloudService.userCollection
+            .doc(userId)
+            .update({"wallet": (curAmt + addAmt).toString()});
+      } else {
+        updateReferUser(userModel.refererUId);
+        CloudService.userCollection.doc(userId).update(
+            {"wallet": (curAmt + addAmt).toString(), "depositForRefer": true});
       }
     } else {
-      updateReferUser(userModel.refererUId);
-      await Provider.of<UserProvider>(context, listen: false).updateDB(
-          {"wallet": (curAmt + addAmt).toString(), "depositForRefer": true});
+      await CloudService.userCollection
+          .doc(userId)
+          .update({"wallet": (curAmt + addAmt).toString()});
     }
   }
 
   Future<void> updateReferUser(String? id) async {
-    if (id != null) {
-      UserModel userModel = UserModel.fromSnapshot(
-          await CloudService.userCollection.doc(id).get());
-      double curAmt = double.parse(userModel.wallet);
-      double addAmt = 200.0 + curAmt;
-      CloudService.userCollection.doc(id).update({"wallet": addAmt.toString()});
-    }
+    UserModel refUserModel =
+        UserModel.fromSnapshot(await CloudService.userCollection.doc(id).get());
+    double curAmt = double.parse(refUserModel.wallet);
+    double addAmt = 200.0 + curAmt;
+    CloudService.userCollection.doc(id).update({"wallet": addAmt.toString()});
   }
 
   void reject() {

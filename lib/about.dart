@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -38,77 +39,21 @@ class AboutScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Image.asset(
-                "images/trading.png",
+                "images/logo_mcx.jpeg",
                 height: 170,
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'Meta Traders',
-                style: TextStyle(
-                    color: Colors.lightBlue,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 21),
-              ),
               const SizedBox(height: 28),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Text(
-                'App owner Address And So thin about',
-                style: TextStyle(fontSize: 20),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text(
+                  "The Multi Commodity Exchange of India Limited (MCX), India's first listed exchange, is a state-of-the-art, commodity derivatives exchange that facilitates online trading of commodity derivatives transactions, thereby providing a platform for price discovery and risk management.\n\nThe Exchange, which started operations in November 2003, operates under the regulatory framework of Securities and Exchange Board of India.",
+                  textAlign: TextAlign.justify,
+                  style: GoogleFonts.lato(
+                    color: Colors.black,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),

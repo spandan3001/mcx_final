@@ -21,12 +21,10 @@ class TradeOngoing extends StatefulWidget {
   State<TradeOngoing> createState() => _TradeOngoingState();
 }
 
-class _TradeOngoingState extends State<TradeOngoing>
-    with AutomaticKeepAliveClientMixin<TradeOngoing> {
+class _TradeOngoingState extends State<TradeOngoing> {
   String amount = "";
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return StreamBuilder(
       stream: CloudService.orderCollection
           .where("isActive", isEqualTo: true)
@@ -46,8 +44,7 @@ class _TradeOngoingState extends State<TradeOngoing>
                   List<ServerOrderModel> svrOrderModels = serOrderSnaps.data!;
                   amount =
                       getTotalAmt(svrOrderModels, orderModelList, userModel.id)
-                          .roundToDouble()
-                          .toString();
+                          .toStringAsFixed(2);
                   return Column(
                     children: [
                       Container(
@@ -56,7 +53,7 @@ class _TradeOngoingState extends State<TradeOngoing>
                             color: Colors.grey.shade100,
                             borderRadius: BorderRadius.circular(20)),
                         child: Text(
-                          "Wallet :${double.parse(userModel.wallet) - double.parse(amount)} ",
+                          "Wallet: ${double.parse(userModel.wallet) - double.parse(amount)} ",
                           style: SafeGoogleFont(
                             'Sofia Pro',
                             fontSize: 18,
@@ -72,7 +69,8 @@ class _TradeOngoingState extends State<TradeOngoing>
                               List<ServerOrderModel> singleSer = [];
                               for (ServerOrderModel ele in svrOrderModels) {
                                 if (ele.orderId
-                                    .contains(orderModelList[index].id)) {
+                                        .contains(orderModelList[index].id) &&
+                                    ele.userId == userModel.id) {
                                   singleSer.add(ele);
                                 }
                               }
@@ -109,7 +107,6 @@ class _TradeOngoingState extends State<TradeOngoing>
       String userId) {
     double amount = 0.0;
     for (ServerOrderModel serOrder in serOrders) {
-      print(serOrder.diffPoint);
       for (OrderModel order in orders) {
         if (serOrder.orderId == order.id && order.userId == userId) {
           amount += difference(serOrder.diffPoint, order.token, order.option);
@@ -119,10 +116,6 @@ class _TradeOngoingState extends State<TradeOngoing>
     }
     return amount;
   }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
 }
 
 class TradeOngoingCard extends StatelessWidget {
@@ -149,7 +142,7 @@ class TradeOngoingCard extends StatelessWidget {
     double fFem = fem * 0.97;
     String commodity = DataModel.getStringFromToken(orderModel.token);
     String ongoingAmount =
-        "${(price[commodity]! * double.parse(orderModel.option) * double.parse(serverOrderModels.diffPoint)).roundToDouble()}";
+        "${(price[commodity]! * double.parse(orderModel.option) * double.parse(serverOrderModels.diffPoint))}";
     return GestureDetector(
       onTap: () async {
         final result = await showAlertDialog(context,
@@ -157,19 +150,18 @@ class TradeOngoingCard extends StatelessWidget {
         if (result != null) {
           if (result) {
             double amountInDouble = double.parse(ongoingAmount);
-            String userAmount;
-            if (amountInDouble > 0) {
-              userAmount = (amountInDouble * 0.8).toString();
-            } else {
-              userAmount = ongoingAmount;
-            }
+            String userAmount =
+                (amountInDouble - ((amountInDouble * 1750) / 10000000))
+                    .toStringAsFixed(2);
             PostModel postModel = PostModel(
                 point: orderModel.placedPoint,
                 userId: userModel.id,
                 orderId: orderModel.id,
                 status: "closed",
                 type: orderModel.type,
-                token: orderModel.token);
+                token: orderModel.token,
+                bet: orderModel.option,
+                wallet: userModel.wallet);
 
             final resp = await doPost(PostModel.toJson(postModel));
             if (resp.statusCode == 200) {
@@ -184,11 +176,13 @@ class TradeOngoingCard extends StatelessWidget {
               );
             }
 
-            Provider.of<UserProvider>(context, listen: false).updateDB({
-              "wallet":
-                  (double.parse(userModel.wallet) - double.parse(userAmount))
-                      .toString()
-            });
+            Provider.of<UserProvider>(context, listen: false).updateDB(
+              {
+                "wallet":
+                    (double.parse(userModel.wallet) - double.parse(userAmount))
+                        .toStringAsFixed(2)
+              },
+            );
           }
         }
       },

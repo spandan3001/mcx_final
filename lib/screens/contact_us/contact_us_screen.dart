@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:mcx_live/provider_classes/admin_details_provider.dart';
 import 'package:mcx_live/ui_screen.dart';
 import 'package:mcx_live/utils/components/app_bar.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../utils/components/show_dialog.dart';
 
@@ -78,16 +76,6 @@ class _ContactScreenState extends State<ContactScreen> {
                   width: 250,
                   height: 150,
                 )),
-                const SizedBox(height: 15),
-                const Center(
-                  child: Text(
-                    'BUY SELL',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
                 const SizedBox(height: 47),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),

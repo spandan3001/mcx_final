@@ -56,7 +56,7 @@ class UserModel {
       "referCode": userModel.referCode,
       "refererUId": userModel.refererUId ?? "",
       "imageUrl": userModel.imageUrl ?? "",
-      "upiID": userModel.upiId ?? "",
+      "upiId": userModel.upiId ?? "",
       'depositForRefer': userModel.depositForRefer
     };
   }

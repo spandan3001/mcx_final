@@ -7,6 +7,7 @@ import 'package:mcx_live/models/user_model.dart';
 import 'package:mcx_live/utils/color_constants.dart';
 
 import '../services/code_generator.dart';
+import '../ui_screen.dart';
 import '../utils/enums/gender_enum.dart';
 
 class OtpVerifier extends StatelessWidget {
@@ -28,47 +29,47 @@ class OtpVerifier extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        constraints: const BoxConstraints.expand(),
-        color: const Color(0xFF16171D),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 10),
+    return BackGround(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Container(
+          constraints: const BoxConstraints.expand(),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 10),
 
-                // Register
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "we have just sent you otp to your registered email .Please check your email and enter the otp",
-                        style: TextStyle(
-                            color: kWhite,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22),
-                      ),
-                      const SizedBox(height: 20),
-                      // verify button
-                      FormValidationForOTP(
-                        email: email,
-                        password: password,
-                        phone: phone,
-                        name: name,
-                        emailOTP: emailOTP,
-                      ),
-
-                      const SizedBox(height: 15),
-
-                      // Already Login
-                    ],
+                  // Register
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "we have just sent you otp to your registered email .Please check your email and enter the otp",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22),
+                        ),
+                        const SizedBox(height: 20),
+                        // verify button
+                        FormValidationForOTP(
+                          email: email,
+                          password: password,
+                          phone: phone,
+                          name: name,
+                          emailOTP: emailOTP,
+                        ),
+                        const SizedBox(height: 15),
+                        // Already Login
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -119,18 +120,18 @@ class _FormValidationForOTPState extends State<FormValidationForOTP> {
       });
       final data = UserModel.toMap(
         UserModel(
-          firstName: widget.name,
-          secondName: widget.name,
-          email: widget.email,
-          number: widget.phone,
-          refererUId: widget.refererUId,
-          wallet: "100.0",
-          gender: Gender.non.name,
-          referCode: CodeGenerator.generateCode(),
-          id: '',
-          imageUrl: "",
-          depositForRefer: false,
-        ),
+            firstName: widget.name,
+            secondName: widget.name,
+            email: widget.email,
+            number: widget.phone,
+            refererUId: widget.refererUId,
+            wallet: "100.0",
+            gender: Gender.non.name,
+            referCode: CodeGenerator.generateCode(),
+            id: '',
+            imageUrl: "",
+            depositForRefer: false,
+            upiId: widget.phone),
       );
       await db.collection("users").doc(userId).set(data);
     } on FirebaseAuthException catch (e) {
@@ -193,13 +194,13 @@ class _FormValidationForOTPState extends State<FormValidationForOTP> {
           TextFormField(
             controller: otpController,
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.black,
             ),
-            cursorColor: const Color.fromRGBO(245, 194, 73, 1),
+            cursorColor: Colors.black,
             decoration: InputDecoration(
               labelText: 'OTP',
               labelStyle: const TextStyle(
-                color: Color.fromRGBO(245, 194, 73, 1),
+                color: Colors.black,
               ),
               hintText: "please enter the OTP",
               hintStyle: const TextStyle(
@@ -208,19 +209,19 @@ class _FormValidationForOTPState extends State<FormValidationForOTP> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: const BorderSide(
-                  color: Color.fromRGBO(245, 194, 73, 1),
+                  color: Colors.black,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
-                borderSide: const BorderSide(
-                  color: Color.fromRGBO(245, 194, 73, 1),
+                borderSide: BorderSide(
+                  color: Colors.grey.shade400,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: const BorderSide(
-                  color: Color.fromRGBO(245, 194, 73, 1),
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -234,7 +235,7 @@ class _FormValidationForOTPState extends State<FormValidationForOTP> {
           const SizedBox(height: 20),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromRGBO(245, 194, 73, 1),
+              backgroundColor: kGradient1,
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
@@ -244,7 +245,7 @@ class _FormValidationForOTPState extends State<FormValidationForOTP> {
             },
             child: const Text(
               'Submit',
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ],

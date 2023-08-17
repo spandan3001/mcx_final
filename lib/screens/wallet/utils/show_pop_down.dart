@@ -54,84 +54,87 @@ class _ShowScannerState extends State<ShowScanner> {
       ),
       content: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.sizeOf(context).width * 0.50,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Text(
-                          "UPI ID:-${adminModelProvider.upiId}",
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                      ),
+                SizedBox(
+                  width: MediaQuery.sizeOf(context).width * 0.50,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      "UPI ID:-${adminModelProvider.upiId}",
+                      style: const TextStyle(fontSize: 20),
                     ),
-                    const SizedBox(width: 5),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                          backgroundColor: Colors.blueGrey.shade100),
-                      onPressed: () {
-                        final val =
-                            ClipboardData(text: "${adminModelProvider.upiId}");
-                        Clipboard.setData(val);
-                      },
-                      child: const Text(
-                        'Copy',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      style: TextButton.styleFrom(
-                          backgroundColor: Colors.blueGrey.shade100),
-                      onPressed: () async {
-                        status = await _saveNetworkImage(
-                            adminModelProvider.imageUrl!);
-                        setState(() {});
-                      },
-                      child: const Text(
-                        'download',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                const SizedBox(width: 5),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                      backgroundColor: Colors.blueGrey.shade100),
+                  onPressed: () {
+                    final val =
+                        ClipboardData(text: "${adminModelProvider.upiId}");
+                    Clipboard.setData(val);
+                  },
+                  child: const Text(
+                    'Copy',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                    if (status != null)
-                      Text(
-                        status! ? "✅Success" : "❌Error",
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                  ],
+                  ),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                      backgroundColor: Colors.blueGrey.shade100),
+                  onPressed: () async {
+                    status =
+                        await _saveNetworkImage(adminModelProvider.imageUrl!);
+                    setState(() {});
+                  },
+                  child: const Text(
+                    'download',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
+            if (status != null)
+              Text(
+                status! ? "✅Success" : "❌Error",
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             const SizedBox(height: 20),
             SizedBox(
               height: 50,
-              child: FormValidationTextField(
-                formKey: formKey,
-                labelText: widget.title,
-                hintText: widget.text,
-                controller: controller,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: FormValidationTextField(
+                    formKey: formKey,
+                    labelText: widget.title,
+                    hintText: widget.text,
+                    controller: controller,
+                  ),
+                ),
               ),
             ),
           ],

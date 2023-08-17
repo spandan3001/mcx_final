@@ -32,6 +32,7 @@ void getOrders() async {
         if (response.statusCode == 200) {
           final List<ServerOrderModel> serverOrderModels =
               orderModelFromJson(response.body);
+          updateHistoryOrders(serverOrderModels);
           OrderStreamController.sendData(serverOrderModels);
         }
       },
@@ -63,18 +64,11 @@ void getData() {
   );
 }
 
-Future<void> updateHistoryOrders() async {
-  List<ServerOrderModel> serverOrderModels = [];
-  try {
-    final url = Uri.parse(putGetUrl);
-    final http.Response response = await http.get(url);
-    if (response.statusCode == 200) {
-      serverOrderModels = orderModelFromJson(response.body);
-    }
-  } catch (ex) {
-    print(ex.toString());
-  }
-  final snapshot = await CloudService.orderCollection.get();
+Future<void> updateHistoryOrders(
+    List<ServerOrderModel> serverOrderModels) async {
+  final snapshot = await CloudService.orderCollection
+      .where('isActive', isEqualTo: true)
+      .get();
   final List<OrderModel> orders =
       snapshot.docs.map((e) => OrderModel.fromSnapshot(e)).toList();
   for (ServerOrderModel serOrder in serverOrderModels) {
@@ -84,7 +78,9 @@ Future<void> updateHistoryOrders() async {
     double closedPoint = 0.0;
     double option = 0.0;
     for (OrderModel order in orders) {
-      if (serOrder.orderId == order.id && serOrder.status == "inactive") {
+      if (serOrder.orderId == order.id &&
+          serOrder.status == "inactive" &&
+          serOrder.userId == order.userId) {
         add = true;
         docId = order.id;
         token = order.token;

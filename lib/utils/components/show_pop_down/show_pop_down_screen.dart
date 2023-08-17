@@ -28,8 +28,6 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
   late UserModel userModel;
 
   String _selectedValue = "1";
-  double _maxValue = 100;
-  final double _minValue = 10;
 
   DataModel? oldData;
 
@@ -90,7 +88,7 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Text(
-                                "quantity : $_selectedValue%",
+                                "quantity : ${double.parse(_selectedValue) * 100}%",
                                 style: SafeGoogleFont(
                                   'Sofia Pro',
                                   fontSize: fFem * 18,
@@ -108,13 +106,15 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
                                             wallet: userModel.wallet,
                                             orders: orders);
 
-                                        setState(() {
-                                          _selectedValue = (num - 0.1)
-                                              .toString()
-                                              .substring(0, 3);
-                                          _controller = TextEditingController(
-                                              text: _selectedValue);
-                                        });
+                                        setState(
+                                          () {
+                                            _selectedValue = (num - 0.1)
+                                                .toString()
+                                                .substring(0, 3);
+                                            _controller = TextEditingController(
+                                                text: _selectedValue);
+                                          },
+                                        );
                                       }
                                     },
                                     icon: const Icon(Icons.remove),
@@ -324,7 +324,7 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
   }
 
   Future<void> onPressed(BuyORSell buyOrSell, List<OrderModel>? orders) async {
-    bool result = await McxService.placeOrder(
+    bool result = await McxService.placeOrder(context,
         userId: userModel.id,
         userEmail: userModel.email,
         token: widget.token,
@@ -354,6 +354,10 @@ class _PopDownSheetForTradeState extends State<PopDownSheetForTrade> {
         double percentage = double.parse(order.option);
         loot += percentage;
       }
+    }
+
+    if (walletAmt < 0) {
+      return false;
     }
 
     if (walletAmt < 1000) {

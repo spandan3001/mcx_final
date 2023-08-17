@@ -12,6 +12,7 @@ import '../chat_screen/chat_screen.dart';
 import '../contact_us/contact_us_screen.dart';
 import '../profile_screen/my_profile_screen.dart';
 import '../refer_and_earn/faq.dart';
+import '../refer_and_earn/pivacy.dart';
 import '../refer_and_earn/refer_and_earn.dart';
 import '../wallet/wallet_screen.dart';
 
@@ -242,27 +243,32 @@ Drawer drawer(BuildContext context, bool isAdmin) {
               ),
             ),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PrivacyScreen(),
+                ),
+              );
             },
           ),
-          ListTile(
-            leading: const Icon(
-              Icons.settings,
-              color: Colors.blueAccent,
-              size: 35,
-            ),
-            title: Text(
-              'Settings',
-              style: GoogleFonts.lato(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(
+          //     Icons.settings,
+          //     color: Colors.blueAccent,
+          //     size: 35,
+          //   ),
+          //   title: Text(
+          //     'Settings',
+          //     style: GoogleFonts.lato(
+          //       color: Colors.black,
+          //       fontSize: 16,
+          //       fontWeight: FontWeight.bold,
+          //     ),
+          //   ),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
           ListTile(
             leading: Image.asset(
               'images/contact.png',

@@ -32,7 +32,7 @@ DataModel createPlatinum(DataModel origin, Map<String, String> data) {
   double closePrice =
       double.parse(origin.closePrice) + double.parse(data['point']!);
   double lastTradedPrice =
-      double.parse(origin.closePrice) + double.parse(data['point']!);
+      double.parse(origin.lastTradedPrice) + double.parse(data['point']!);
   List<BestFiveDatum> bestFiveData = List.generate(10, (index) {
     String tempBuySell = "";
     if (index == 0) {

@@ -28,6 +28,14 @@ class ServerOrderModel {
           id: json["_id"],
           userId: json["userid"],
           orderId: json["orderid"],
-          diffPoint: json["final"].toString(),
+          diffPoint: convertToDecimal(json["final"].toString()),
           status: json["status"]);
+
+  static String convertToDecimal(String str) {
+    if (str.length > 2) {
+      return "${str.substring(0, str.length - 2)}.${str.substring(str.length - 2, str.length)}";
+    } else {
+      return str;
+    }
+  }
 }

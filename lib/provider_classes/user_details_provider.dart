@@ -26,6 +26,7 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> updateDB(Map<String, dynamic> data) async {
     await CloudService.userCollection.doc(_userModel.id).update(data);
+    print(_userModel.id);
     await getUserFromDB();
     _notifyAll();
   }

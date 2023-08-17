@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../provider_classes/user_details_provider.dart';
-import '../../utils/components/show_dialog.dart';
 
 class ReferEarn extends StatefulWidget {
   const ReferEarn({super.key});

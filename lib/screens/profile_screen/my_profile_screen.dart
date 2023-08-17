@@ -314,6 +314,7 @@ class _ProfileState extends State<Profile> {
                               onPressed: () {
                                 userProvider.setUserToDB(
                                   UserModel(
+                                      imageUrl: userModel.imageUrl,
                                       id: userModel.id,
                                       gender: Gender.others.name,
                                       number: numberController.text.isNotEmpty
@@ -345,6 +346,7 @@ class _ProfileState extends State<Profile> {
                                   secondNameController.clear();
                                   genderController.clear();
                                   numberController.clear();
+                                  upiController.clear();
                                 }
                               },
                             );

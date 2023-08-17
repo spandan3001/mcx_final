@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mcx_live/provider_classes/platinum_provider.dart';
 import 'package:mcx_live/utils/components/app_bar.dart';
 import 'package:mcx_live/utils/components/circular_progress.dart';
 import 'package:mcx_live/utils/components/show_dialog.dart';
@@ -139,10 +138,6 @@ class _PlatinumScreenState extends State<PlatinumScreen> {
                                             : data?['point'],
                                       },
                                     );
-                                  },
-                                ).then(
-                                  (value) {
-                                    PlatinumProvider.getUserFromDB();
                                     tokenController.clear();
                                     pointController.clear();
                                   },

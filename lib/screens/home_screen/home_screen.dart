@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mcx_live/provider_classes/platinum_provider.dart';
 import 'package:mcx_live/screens/home_screen/drawer.dart';
 import 'package:mcx_live/screens/home_screen/sort_screen.dart';
+import 'package:mcx_live/screens/home_screen/widgets/commodity_card.dart';
+import 'package:mcx_live/screens/home_screen/widgets/decorations.dart';
 import 'package:mcx_live/services/api/api.dart';
 import 'package:mcx_live/ui_screen.dart';
 import '../../models/data_model.dart';
@@ -9,8 +10,6 @@ import '../../services/api/stream_controller.dart';
 import '../../six_moths_only/trade_symbol.dart';
 import '../../utils/components/circular_progress.dart';
 import '../../utils/google_font.dart';
-import 'package:mcx_live/screens/mcx_screen/widgets/commodity_card.dart';
-import 'package:mcx_live/screens/mcx_screen/widgets/decorations.dart';
 
 class SidePanelScreen extends StatefulWidget {
   const SidePanelScreen({Key? key, required this.isAdmin}) : super(key: key);
@@ -29,15 +28,15 @@ class _SidePanelScreenState extends State<SidePanelScreen>
   Map<String, ColorModel> colorSet = {};
   String searchString = "";
 
-  List<bool> checkboxValues = [];
+  List<Map<String, bool>> checkboxValues = [];
   @override
   void initState() {
     super.initState();
     getData();
     getOrders();
-    updateHistoryOrders();
+    listenToStream();
     _initializeCheckboxes();
-    PlatinumProvider.getUserFromDB();
+    sortTradeSymbol();
     tabController = TabController(length: 2, vsync: this);
   }
 
@@ -151,11 +150,9 @@ class _SidePanelScreenState extends State<SidePanelScreen>
                 stream: McxStreamController.stream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    listDataModel = [];
-                    sListDataModel = [];
                     listDataModel = snapshot.data!;
-                    searchModel();
                     giveColors();
+                    searchModel();
                     return ListView.builder(
                         itemCount: sListDataModel.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -182,22 +179,19 @@ class _SidePanelScreenState extends State<SidePanelScreen>
   }
 
   void searchModel() {
-    listDataModel.sort(
+    sListDataModel.sort(
       (a, b) => a.token.compareTo(b.token),
     );
-    sortTradeSymbol();
+    // checkboxValues.sort((a, b) {
+    //   final tokenA = a.keys.first;
+    //   final tokenB = b.keys.first;
+    //   return tokenA.compareTo(tokenB);
+    // });
+  }
+
+  void onlyUpcoming() {
     final values = singleCom.values;
-
-    int index = 0;
-    List<DataModel> temp = [];
-    for (index = 0; index < checkboxValues.length; index++) {
-      if (checkboxValues[index]) {
-        temp.add(listDataModel[index]);
-      }
-    }
-    sListDataModel = temp;
-
-    sListDataModel = temp.where((element) {
+    sListDataModel = sListDataModel.where((element) {
       if (DataModel.getStringFromToken(element.token).contains(searchString)) {
         for (Map<String, dynamic> value in values) {
           if (element.token.contains(value["token"])) {
@@ -225,7 +219,17 @@ class _SidePanelScreenState extends State<SidePanelScreen>
         colorSet.addAll({dataModel.token: colorModel});
       }
     }
+    List<DataModel> temp = [];
     for (DataModel dataModel in listDataModel) {
+      for (Map<String, bool> check in checkboxValues) {
+        if (check[dataModel.token] != null) {
+          if (check[dataModel.token]!) {
+            temp.add(dataModel);
+          }
+        }
+      }
+      sListDataModel = temp;
+      onlyUpcoming();
       BuySellModel buySellModel = BuySellModel(
           sellPoint: double.parse(dataModel.bestFiveData[0].buySellPrice),
           buyPoint: double.parse(dataModel.bestFiveData[5].buySellPrice));
@@ -246,10 +250,15 @@ class _SidePanelScreenState extends State<SidePanelScreen>
   }
 
   void _initializeCheckboxes() {
+    final tradeTokens = tradeSymbol.keys.toList();
     checkboxValues = List.generate(
-      listDataModel.length,
-      (index) => sListDataModel
-          .any((selected) => selected.token == listDataModel[index].token),
+      tradeTokens.length,
+      (index) {
+        final dataModelToken = tradeTokens[index];
+        return {
+          dataModelToken: true,
+        };
+      },
     );
   }
 }

@@ -7,7 +7,7 @@ import '../../models/data_model.dart';
 class DataModelCheckbox extends StatefulWidget {
   final List<DataModel> allData;
   final List<DataModel> selectedData;
-  final List<bool> checkboxValues;
+  final List<Map<String, bool>> checkboxValues; // Changed data structure
 
   const DataModelCheckbox({
     super.key,
@@ -21,63 +21,47 @@ class DataModelCheckbox extends StatefulWidget {
 }
 
 class _DataModelCheckboxState extends State<DataModelCheckbox> {
-  List<bool> _checkboxValues = [];
-
   @override
   void initState() {
     super.initState();
-    _initializeCheckboxes();
   }
 
-  void _initializeCheckboxes() {
-    _checkboxValues = List.generate(
-      widget.allData.length,
-      (index) => widget.selectedData
-          .any((selected) => selected.token == widget.allData[index].token),
-    );
-  }
-
-  void _onCheckboxChanged(int index, bool isChecked) {
-    setState(() {
-      _checkboxValues[index] = isChecked;
-      final dataModel = widget.allData[index];
-      if (isChecked) {
-        // Add the DataModel to the selectedData list
-        if (!widget.selectedData.contains(dataModel)) {
-          widget.selectedData.add(dataModel);
-        }
-      } else {
-        // Toggle the DataModel's presence in the selectedData list
-        widget.selectedData.remove(dataModel);
-      }
-    });
-  }
+  void _onCheckboxChanged(String token, bool isChecked) {}
 
   @override
   Widget build(BuildContext context) {
     return BackGround(
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         appBar: appBar(
             title: "CHECK LIST",
             onTap: () {
-              Navigator.pop(context, _checkboxValues);
+              Navigator.pop(context, widget.checkboxValues);
             }),
         body: ListView.builder(
           itemCount: widget.allData.length,
           itemBuilder: (context, index) {
+            final token = widget.allData[index].token;
+            int checkIndex = 0;
+            for (Map<String, bool> check in widget.checkboxValues) {
+              if (check[token] != null) {
+                checkIndex = widget.checkboxValues
+                    .indexWhere((entry) => entry.keys.toList()[0] == token);
+              }
+            }
             return ListTile(
               title: Row(
                 children: [
-                  Text(DataModel.getStringFromToken(
-                      widget.allData[index].token)),
-                  Text(DataModel.getExpiryFromToken(
-                      widget.allData[index].token)),
+                  Text(DataModel.getStringFromToken(token)),
+                  Text(DataModel.getExpiryFromToken(token)),
                 ],
               ),
               leading: Checkbox(
-                value: _checkboxValues[index],
+                value: widget.checkboxValues[checkIndex][token],
                 onChanged: (isChecked) {
-                  _onCheckboxChanged(index, isChecked ?? false);
+                  setState(() {
+                    widget.checkboxValues[checkIndex][token] = isChecked!;
+                  });
                 },
               ),
             );

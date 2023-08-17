@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mcx_live/models/server_order_model.dart';
+import 'package:mcx_live/provider_classes/platinum_provider.dart';
+import 'package:mcx_live/services/firestore_services.dart';
 
 import '../../models/data_model.dart';
 
@@ -37,4 +40,15 @@ class OrderStreamController {
   static void dispose() {
     _controller.close();
   }
+}
+
+void listenToStream() {
+  CloudService.platinumDoc.snapshots().listen(
+    (snapshot) {
+      final data = snapshot.data();
+      PlatinumProvider.token = data?['token'];
+      PlatinumProvider.point = data?['point'];
+      print(data);
+    },
+  );
 }

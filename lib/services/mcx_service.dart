@@ -1,15 +1,18 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mcx_live/models/data_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:mcx_live/models/post_model.dart';
 import 'package:mcx_live/services/firestore_services.dart';
-import 'package:mcx_live/six_moths_only/trade_symbol.dart';
+import 'package:provider/provider.dart';
 
+import '../models/data_model.dart';
 import '../models/order_model.dart';
+import '../provider_classes/user_details_provider.dart';
+import '../six_moths_only/trade_symbol.dart';
 import 'api/api.dart';
 
 class McxService {
-  static Future<bool> placeOrder(
+  static Future<bool> placeOrder(BuildContext context,
       {required String userId,
       required String userEmail,
       required String wallet,
@@ -31,6 +34,14 @@ class McxService {
         "isActive": true,
         "type": type
       });
+      double currentAmt = double.parse(placedPoint) *
+          double.parse(option) *
+          price[DataModel.getStringFromToken(token)]!;
+      double userAmount =
+          (double.parse(wallet) - ((currentAmt * 1750) / 10000000));
+      Provider.of<UserProvider>(context, listen: false).updateDB(
+        {"wallet": (double.parse(wallet) - userAmount).toStringAsFixed(2)},
+      );
       OrderModel orderModel = OrderModel.fromSnapshot(await orderDoc.get());
       PostModel postModel = PostModel(
           point: placedPoint,
@@ -38,7 +49,9 @@ class McxService {
           orderId: orderModel.id,
           status: "open",
           type: type,
-          token: token);
+          token: token,
+          bet: orderModel.option,
+          wallet: wallet);
 
       final resp = await doPost(PostModel.toJson(postModel));
       if (resp.statusCode == 200) {
@@ -54,6 +67,9 @@ class McxService {
   static bool checkConditions(
       {required String wallet, required List<OrderModel>? orders}) {
     double walletAmt = double.parse(wallet);
+    if (walletAmt < 500) {
+      return false;
+    }
 
     double loot = 0.0;
     if (orders != null) {

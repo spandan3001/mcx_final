@@ -35,6 +35,7 @@ class _TradeHistoryState extends State<TradeHistory> {
                       closePrice: orderModelList[index].closedPoint,
                       amount: orderModelList[index].amount,
                       token: orderModelList[index].token,
+                      option: orderModelList[index].option,
                     ));
           } else {
             return const Loading();
@@ -50,12 +51,14 @@ class TradeHistoryCard extends StatefulWidget {
       required this.type,
       required this.closePrice,
       required this.amount,
-      required this.token});
+      required this.token,
+      required this.option});
   final String placedPrice;
   final String type;
   final String token;
   final String closePrice;
   final String amount;
+  final String option;
 
   @override
   State<TradeHistoryCard> createState() => _TradeHistoryCardState();
@@ -117,7 +120,7 @@ class _TradeHistoryCardState extends State<TradeHistoryCard> {
                       ],
                     ),
                     Text(
-                      "?? Qty (${widget.type.toUpperCase().substring(0, 1)})",
+                      "${widget.option} Qty (${widget.type.toUpperCase().substring(0, 1)})",
                       style: SafeGoogleFont(
                         'Sofia Pro',
                         fontSize: fFem * 14,
@@ -154,7 +157,7 @@ class _TradeHistoryCardState extends State<TradeHistoryCard> {
       String placedPoints, String actualPoints, String commodity) {
     double placed = double.parse(placedPoints);
     double actual = double.parse(actualPoints);
-    return ((placed - actual) * price[commodity]!).roundToDouble().toString();
+    return ((placed - actual) * price[commodity]!).toStringAsFixed(2);
   }
 
   Color getTextColor(String actualPrice) {

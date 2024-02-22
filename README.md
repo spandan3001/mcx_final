@@ -2,6 +2,14 @@
 
 The MCX Trading App is a cutting-edge mobile application that provides users with a seamless and efficient trading experience. Leveraging technologies like Flutter, Node.js, MongoDB, and Firebase, the app aims to revolutionize the way users engage in trading activities. It ensures reliability, real-time data updates, and user-friendly interfaces.
 
+## Output 
+
+
+
+https://github.com/spandan3001/mcx_final/assets/73657279/c519ea80-823a-4935-92d9-97e657e37d7d
+
+
+
 ## Features
 
 - Seamless Trading: Execute trades with ease using the intuitive interface.
@@ -16,25 +24,11 @@ The MCX Trading App is a cutting-edge mobile application that provides users wit
 - MongoDB: For storing and managing trading data efficiently.
 - Firebase: For real-time data synchronization and authentication.
 
-## Installation
+## Please Note 
+- this project cannot be cloned..
+- just a demo 
 
-1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/spandan3001/mcx_final.git
-   ```
-2. Navigate to the project directory:
-    ```bash
-   cd your-repo
-   ```
-3. Install dependencies:
-    ```bash
-    flutter pub get
-    ```
-4. Run the app:
-    ```bash
-   flutter run
-   ```
 
 ## Contributions
 - [spandan MN](https://github.com/spandan3001)

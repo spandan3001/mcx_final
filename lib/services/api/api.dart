@@ -9,8 +9,8 @@ import '../../models/data_model.dart';
 import '../../models/order_model.dart';
 import '../../models/server_order_model.dart';
 
-const apiUrl = "http://65.1.168.46:3000/";
-const putGetUrl = "http://65.1.168.46:3000/mcx/";
+// const apiUrl = ;//get ur own api
+// const putGetUrl = ;
 
 final url = Uri.parse(apiUrl);
 
